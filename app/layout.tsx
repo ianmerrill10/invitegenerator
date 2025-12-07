@@ -3,6 +3,7 @@ import { Playfair_Display, Outfit, Inter, JetBrains_Mono } from "next/font/googl
 import { Toaster } from "sonner";
 import "@/styles/globals.css";
 import { APP_CONFIG } from "@/lib/constants";
+import { OrganizationSchema, WebSiteSchema, SoftwareApplicationSchema } from "@/components/seo";
 
 // ============================================
 // FONT CONFIGURATION
@@ -151,6 +152,11 @@ export default function RootLayout({
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </head>
       <body className="min-h-screen bg-surface-50 font-body antialiased">
+        {/* Global structured data for SEO */}
+        <OrganizationSchema />
+        <WebSiteSchema />
+        <SoftwareApplicationSchema />
+
         {/* Skip to main content for accessibility */}
         <a
           href="#main-content"
