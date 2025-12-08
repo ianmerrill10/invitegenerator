@@ -24,6 +24,12 @@ import {
   Upload,
   FolderOpen,
   Palette,
+  DollarSign,
+  TrendingUp,
+  Gift,
+  Users,
+  Award,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -801,6 +807,176 @@ Please provide:
                       React components for Canva apps
                     </p>
                   </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Canva Monetization Strategy */}
+            <Card className="border-2 border-brand-300 bg-brand-50/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-brand-500" />
+                  Canva Monetization Strategy
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <p className="text-surface-600">
+                  There are multiple ways to monetize the Canva integration for InviteGenerator:
+                </p>
+
+                {/* Empower Canvassador Program */}
+                <div className="p-4 bg-white rounded-xl border border-surface-200">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shrink-0">
+                      <Award className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-heading font-semibold text-surface-900">
+                          Empower Canvassador Program
+                        </h3>
+                        <Badge variant="primary">Recommended</Badge>
+                      </div>
+                      <p className="text-sm text-surface-600 mb-3">
+                        Canva's affiliate program for content creators. Earn up to $36 per Pro subscription referral.
+                      </p>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                        <div className="p-3 bg-surface-50 rounded-lg text-center">
+                          <p className="text-lg font-bold text-brand-600">$36</p>
+                          <p className="text-xs text-surface-500">Max per referral</p>
+                        </div>
+                        <div className="p-3 bg-surface-50 rounded-lg text-center">
+                          <p className="text-lg font-bold text-brand-600">80%</p>
+                          <p className="text-xs text-surface-500">Annual commission</p>
+                        </div>
+                        <div className="p-3 bg-surface-50 rounded-lg text-center">
+                          <p className="text-lg font-bold text-brand-600">30 days</p>
+                          <p className="text-xs text-surface-500">Cookie window</p>
+                        </div>
+                        <div className="p-3 bg-surface-50 rounded-lg text-center">
+                          <p className="text-lg font-bold text-brand-600">2%</p>
+                          <p className="text-xs text-surface-500">Acceptance rate</p>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-warning-50 rounded-lg border border-warning-200 mb-4">
+                        <h4 className="font-semibold text-warning-800 text-sm mb-1">Requirements to Qualify:</h4>
+                        <ul className="text-xs text-warning-700 space-y-1">
+                          <li>• Active social media presence (YouTube, TikTok, Instagram, etc.)</li>
+                          <li>• Create at least 1 Canva-related content piece monthly</li>
+                          <li>• Embody Canva's values and have engaged audience</li>
+                        </ul>
+                      </div>
+
+                      <a
+                        href="https://public.canva.site/empower-canvassador-program"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="primary" rightIcon={<ExternalLink className="h-4 w-4" />}>
+                          Apply to Empower Program
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reseller Partner */}
+                <div className="p-4 bg-white rounded-xl border border-surface-200">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shrink-0">
+                      <Users className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-heading font-semibold text-surface-900 mb-2">
+                        Reseller Partner Program
+                      </h3>
+                      <p className="text-sm text-surface-600 mb-3">
+                        Resell Canva Enterprise licenses to organizations with 100+ users. Earn margin on each sale.
+                      </p>
+                      <ul className="text-sm text-surface-600 space-y-1 mb-3">
+                        <li>• Target mid-large organizations (100+ people)</li>
+                        <li>• Resell Canva Enterprise and Canva for Campus</li>
+                        <li>• Unlock exclusive benefits and support</li>
+                      </ul>
+                      <a
+                        href="https://www.canva.com/partners/reseller/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" size="sm" rightIcon={<ExternalLink className="h-4 w-4" />}>
+                          Learn About Reseller Program
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Implementation Strategy */}
+                <div className="p-4 bg-surface-900 rounded-xl text-white">
+                  <h3 className="font-heading font-semibold mb-4 flex items-center gap-2">
+                    <Target className="h-5 w-5 text-brand-400" />
+                    Implementation Strategy for InviteGenerator
+                  </h3>
+                  <ol className="space-y-3 text-sm">
+                    <li className="flex items-start gap-3">
+                      <span className="h-6 w-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                      <div>
+                        <p className="font-medium text-white">Add Affiliate Links at Key Touchpoints</p>
+                        <p className="text-surface-400 text-xs">When users export to Canva, recommend Canva Pro for advanced features</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="h-6 w-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                      <div>
+                        <p className="font-medium text-white">Create Canva Tutorial Content</p>
+                        <p className="text-surface-400 text-xs">Produce monthly videos/guides showing how to use Canva with InviteGenerator</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="h-6 w-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                      <div>
+                        <p className="font-medium text-white">Promote Canva Pro Benefits</p>
+                        <p className="text-surface-400 text-xs">Highlight Pro features: background remover, Brand Kit, premium templates</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="h-6 w-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                      <div>
+                        <p className="font-medium text-white">Track Conversions</p>
+                        <p className="text-surface-400 text-xs">Use Impact.com dashboard to monitor clicks, conversions, and earnings</p>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+
+                {/* Revenue Potential */}
+                <div className="p-4 bg-success-50 rounded-xl border border-success-200">
+                  <h3 className="font-heading font-semibold text-success-800 mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Revenue Potential Calculator
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-3 bg-white rounded-lg">
+                      <p className="text-xs text-surface-500 mb-1">If 100 users/month convert:</p>
+                      <p className="text-2xl font-bold text-success-600">$3,600/mo</p>
+                      <p className="text-xs text-surface-500">100 × $36 commission</p>
+                    </div>
+                    <div className="p-3 bg-white rounded-lg">
+                      <p className="text-xs text-surface-500 mb-1">If 500 users/month convert:</p>
+                      <p className="text-2xl font-bold text-success-600">$18,000/mo</p>
+                      <p className="text-xs text-surface-500">500 × $36 commission</p>
+                    </div>
+                    <div className="p-3 bg-white rounded-lg">
+                      <p className="text-xs text-surface-500 mb-1">If 1000 users/month convert:</p>
+                      <p className="text-2xl font-bold text-success-600">$36,000/mo</p>
+                      <p className="text-xs text-surface-500">1000 × $36 commission</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-success-700 mt-3">
+                    * Assumes all users sign up for annual Canva Pro subscriptions
+                  </p>
                 </div>
               </CardContent>
             </Card>
