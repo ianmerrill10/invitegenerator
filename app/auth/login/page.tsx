@@ -92,8 +92,8 @@ export default function LoginPage() {
             Invitations with AI
           </h1>
           <p className="text-xl text-white/80 max-w-md">
-            Join thousands of users creating stunning invitations for weddings,
-            birthdays, and every celebration in between.
+            Create stunning invitations for weddings, birthdays, and every
+            celebration in between with AI-powered design.
           </p>
 
           {/* Feature highlights */}

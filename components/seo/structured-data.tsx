@@ -20,26 +20,14 @@ export function OrganizationSchema() {
     logo: `${SITE_URL}/logo.png`,
     description:
       "InviteGenerator helps you create beautiful digital invitations for any occasion with AI-powered design tools.",
-    sameAs: [
-      "https://twitter.com/invitegenerator",
-      "https://facebook.com/invitegenerator",
-      "https://instagram.com/invitegenerator",
-      "https://pinterest.com/invitegenerator",
-    ],
+    // Note: sameAs (social links) removed - only add when real social accounts exist
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
       email: "support@invitegenerator.com",
       availableLanguage: ["English"],
     },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "123 Event Street",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      postalCode: "94102",
-      addressCountry: "US",
-    },
+    // Note: address removed - add when real business address exists
   };
 
   return (
@@ -315,11 +303,7 @@ export function SoftwareApplicationSchema() {
       price: "0",
       priceCurrency: "USD",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "2500",
-    },
+    // Note: aggregateRating removed - only add when we have real user reviews
     description:
       "Free AI-powered invitation maker with beautiful templates for weddings, birthdays, baby showers, and more.",
     screenshot: `${SITE_URL}/screenshots/app-dashboard.png`,
@@ -342,43 +326,5 @@ export function SoftwareApplicationSchema() {
   );
 }
 
-// Local Business Schema (if applicable)
-export function LocalBusinessSchema() {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": SITE_URL,
-    name: SITE_NAME,
-    image: `${SITE_URL}/logo.png`,
-    url: SITE_URL,
-    telephone: "",
-    priceRange: "Free - $$",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "123 Event Street",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      postalCode: "94102",
-      addressCountry: "US",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 37.7749,
-      longitude: -122.4194,
-    },
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      opens: "00:00",
-      closes: "23:59",
-    },
-  };
-
-  return (
-    <Script
-      id="local-business-schema"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
-  );
-}
+// Note: LocalBusinessSchema removed - this is an online SaaS, not a local business
+// Only add this schema if/when there is a physical business location

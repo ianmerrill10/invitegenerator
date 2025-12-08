@@ -94,39 +94,26 @@ const features = [
   },
 ];
 
-// Social proof stats
-const stats = [
-  { value: "50K+", label: "Invitations Created" },
-  { value: "10K+", label: "Happy Users" },
-  { value: "4.9", label: "App Rating", icon: Star },
-  { value: "99.9%", label: "Uptime" },
-];
 
-// Testimonials
-const testimonials = [
+// Example use cases (clearly marked as illustrative examples, not real testimonials)
+const useCases = [
   {
-    quote:
-      "InviteGenerator made planning my daughter's wedding so much easier. The AI suggestions were spot-on!",
-    author: "Sarah M.",
-    role: "Mother of the Bride",
-    avatar: "SM",
-    rating: 5,
+    scenario: "Wedding Planning",
+    description:
+      "Create elegant wedding invitations with AI-powered design suggestions tailored to your theme and color palette.",
+    icon: Heart,
   },
   {
-    quote:
-      "I created 50 invitations for our corporate event in under an hour. Game changer for busy professionals.",
-    author: "Michael T.",
-    role: "Event Manager",
-    avatar: "MT",
-    rating: 5,
+    scenario: "Corporate Events",
+    description:
+      "Design professional invitations for conferences, team events, or company celebrations in minutes.",
+    icon: Building,
   },
   {
-    quote:
-      "The RSVP tracking saved me so much time. I could see responses in real-time and plan accordingly.",
-    author: "Jessica L.",
-    role: "Birthday Party Host",
-    avatar: "JL",
-    rating: 5,
+    scenario: "Birthday Parties",
+    description:
+      "Track RSVPs in real-time and manage guest lists effortlessly for any birthday celebration.",
+    icon: Cake,
   },
 ];
 
@@ -222,27 +209,22 @@ export default function LandingPage() {
                   </Link>
                 </motion.div>
 
-                {/* Social Proof */}
+                {/* Trust indicators */}
                 <motion.div
                   variants={fadeInUp}
-                  className="mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
+                  className="mt-10 flex flex-wrap items-center gap-4 justify-center lg:justify-start text-sm text-surface-600"
                 >
-                  {/* User Avatars */}
-                  <div className="flex -space-x-3">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div
-                        key={i}
-                        className="h-10 w-10 rounded-full bg-gradient-to-br from-brand-400 to-accent-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold"
-                      >
-                        {String.fromCharCode(64 + i)}
-                      </div>
-                    ))}
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success-500" />
+                    No credit card required
                   </div>
-                  <div className="text-sm text-surface-600">
-                    <span className="font-semibold text-surface-900">
-                      10,000+
-                    </span>{" "}
-                    happy users creating invitations
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success-500" />
+                    3 free invitations
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success-500" />
+                    AI-powered design
                   </div>
                 </motion.div>
               </motion.div>
@@ -362,33 +344,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-12 bg-white border-y border-surface-200">
-          <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <span className="text-3xl md:text-4xl font-heading font-bold text-surface-900">
-                      {stat.value}
-                    </span>
-                    {stat.icon && (
-                      <Star className="h-6 w-6 text-warning-400 fill-warning-400" />
-                    )}
-                  </div>
-                  <span className="text-sm text-surface-500">{stat.label}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Features Section */}
         <section className="section bg-surface-50">
@@ -525,7 +480,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
+        {/* Use Cases Section */}
         <section className="section bg-surface-900 text-white relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl" />
@@ -543,25 +498,24 @@ export default function LandingPage() {
                 variant="outline"
                 className="mb-4 border-surface-700 text-surface-300"
               >
-                Testimonials
+                Use Cases
               </Badge>
               <h2 className="font-display text-display-md md:text-display-lg font-bold mb-4">
-                Loved by{" "}
+                Perfect for{" "}
                 <span className="bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent">
-                  Event Planners
-                </span>{" "}
-                Everywhere
+                  Any Event
+                </span>
               </h2>
               <p className="text-lg text-surface-400">
-                See what our users have to say about their experience.
+                From intimate gatherings to large celebrations, create invitations that impress.
               </p>
             </motion.div>
 
-            {/* Testimonials Grid */}
+            {/* Use Cases Grid */}
             <div className="grid md:grid-cols-3 gap-6">
-              {testimonials.map((testimonial, index) => (
+              {useCases.map((useCase, index) => (
                 <motion.div
-                  key={testimonial.author}
+                  key={useCase.scenario}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -571,35 +525,20 @@ export default function LandingPage() {
                     className="bg-surface-800/50 border-surface-700 backdrop-blur h-full"
                     padding="lg"
                   >
-                    {/* Stars */}
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-5 w-5 text-warning-400 fill-warning-400"
-                        />
-                      ))}
+                    {/* Icon */}
+                    <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-brand-500/20 to-accent-500/20 flex items-center justify-center mb-5">
+                      <useCase.icon className="h-7 w-7 text-brand-400" />
                     </div>
 
-                    {/* Quote */}
-                    <p className="text-surface-300 mb-6 leading-relaxed">
-                      "{testimonial.quote}"
+                    {/* Scenario */}
+                    <h3 className="font-heading font-semibold text-xl text-white mb-3">
+                      {useCase.scenario}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-surface-400 leading-relaxed">
+                      {useCase.description}
                     </p>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white font-semibold">
-                        {testimonial.avatar}
-                      </div>
-                      <div>
-                        <p className="font-heading font-semibold text-white">
-                          {testimonial.author}
-                        </p>
-                        <p className="text-sm text-surface-400">
-                          {testimonial.role}
-                        </p>
-                      </div>
-                    </div>
                   </Card>
                 </motion.div>
               ))}
@@ -627,7 +566,7 @@ export default function LandingPage() {
                 Ready to Create Your First Invitation?
               </h2>
               <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-                Join thousands of happy users creating beautiful invitations.
+                Create beautiful invitations in minutes with AI-powered design.
                 Start free, no credit card required.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -669,9 +608,61 @@ export default function LandingPage() {
             </motion.div>
           </div>
         </section>
+
+        {/* Real Platform Stats - Small and at the bottom */}
+        <RealStats />
       </main>
 
       <Footer />
     </>
+  );
+}
+
+// Component to fetch and display real platform statistics
+function RealStats() {
+  const [stats, setStats] = React.useState<{
+    invitations: number;
+    users: number;
+    rsvps: number;
+  } | null>(null);
+
+  React.useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/stats");
+        const data = await response.json();
+        if (data.success) {
+          setStats(data.data);
+        }
+      } catch (error) {
+        // Silently fail - stats are optional
+        console.error("Failed to fetch stats:", error);
+      }
+    }
+    fetchStats();
+  }, []);
+
+  // Don't show anything if we don't have stats or all are zero
+  if (!stats || (stats.invitations === 0 && stats.users === 0 && stats.rsvps === 0)) {
+    return null;
+  }
+
+  return (
+    <section className="py-6 bg-surface-100 border-t border-surface-200">
+      <div className="container-custom">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-surface-500">
+          <span className="text-surface-400">Platform stats:</span>
+          {stats.users > 0 && (
+            <span>{stats.users.toLocaleString()} user{stats.users !== 1 ? "s" : ""}</span>
+          )}
+          {stats.invitations > 0 && (
+            <span>{stats.invitations.toLocaleString()} invitation{stats.invitations !== 1 ? "s" : ""} created</span>
+          )}
+          {stats.rsvps > 0 && (
+            <span>{stats.rsvps.toLocaleString()} RSVP{stats.rsvps !== 1 ? "s" : ""} collected</span>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
