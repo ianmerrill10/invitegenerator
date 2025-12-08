@@ -9,30 +9,30 @@
 
 @layer base {
   :root {
-    /* Color tokens */
-    --color-background: 250 250 249;
-    --color-foreground: 28 25 23;
+    /* Color tokens - Dusty rose & slate blue palette */
+    --color-background: 250 250 250;
+    --color-foreground: 23 23 23;
     --color-card: 255 255 255;
-    --color-card-foreground: 28 25 23;
+    --color-card-foreground: 23 23 23;
     --color-popover: 255 255 255;
-    --color-popover-foreground: 28 25 23;
-    --color-primary: 255 107 71;
+    --color-popover-foreground: 23 23 23;
+    --color-primary: 212 145 159;
     --color-primary-foreground: 255 255 255;
-    --color-secondary: 20 184 166;
+    --color-secondary: 100 116 139;
     --color-secondary-foreground: 255 255 255;
-    --color-muted: 245 245 244;
-    --color-muted-foreground: 120 113 108;
-    --color-accent: 231 229 228;
-    --color-accent-foreground: 28 25 23;
+    --color-muted: 245 245 245;
+    --color-muted-foreground: 115 115 115;
+    --color-accent: 229 229 229;
+    --color-accent-foreground: 23 23 23;
     --color-destructive: 239 68 68;
     --color-destructive-foreground: 255 255 255;
-    --color-border: 231 229 228;
-    --color-input: 231 229 228;
-    --color-ring: 255 107 71;
-    
+    --color-border: 229 229 229;
+    --color-input: 229 229 229;
+    --color-ring: 212 145 159;
+
     /* Radius */
     --radius: 0.75rem;
-    
+
     /* Transitions */
     --transition-fast: 150ms;
     --transition-base: 200ms;
@@ -40,25 +40,25 @@
   }
 
   .dark {
-    --color-background: 12 10 9;
-    --color-foreground: 250 250 249;
-    --color-card: 28 25 23;
-    --color-card-foreground: 250 250 249;
-    --color-popover: 28 25 23;
-    --color-popover-foreground: 250 250 249;
-    --color-primary: 255 107 71;
+    --color-background: 10 10 10;
+    --color-foreground: 250 250 250;
+    --color-card: 38 38 38;
+    --color-card-foreground: 250 250 250;
+    --color-popover: 38 38 38;
+    --color-popover-foreground: 250 250 250;
+    --color-primary: 212 145 159;
     --color-primary-foreground: 255 255 255;
-    --color-secondary: 20 184 166;
+    --color-secondary: 100 116 139;
     --color-secondary-foreground: 255 255 255;
-    --color-muted: 41 37 36;
-    --color-muted-foreground: 168 162 158;
-    --color-accent: 41 37 36;
-    --color-accent-foreground: 250 250 249;
+    --color-muted: 38 38 38;
+    --color-muted-foreground: 163 163 163;
+    --color-accent: 38 38 38;
+    --color-accent-foreground: 250 250 250;
     --color-destructive: 239 68 68;
     --color-destructive-foreground: 255 255 255;
-    --color-border: 41 37 36;
-    --color-input: 41 37 36;
-    --color-ring: 255 107 71;
+    --color-border: 38 38 38;
+    --color-input: 38 38 38;
+    --color-ring: 212 145 159;
   }
 
   * {

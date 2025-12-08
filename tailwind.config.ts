@@ -10,49 +10,49 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary brand colors - Warm coral/peach tones for celebration vibes
+        // Primary brand colors - Soft dusty rose/blush for elegance
         brand: {
-          50: "#FFF7F5",
-          100: "#FFEDE8",
-          200: "#FFD9CF",
-          300: "#FFB8A6",
-          400: "#FF8F73",
-          500: "#FF6B47", // Primary
-          600: "#E84D28",
-          700: "#C23A1A",
-          800: "#9A3118",
-          900: "#7D2D18",
-          950: "#441308",
+          50: "#FDF8F9",
+          100: "#FAF0F2",
+          200: "#F5E1E5",
+          300: "#EECCD3",
+          400: "#E4AEBB",
+          500: "#D4919F", // Primary - dusty rose
+          600: "#C07183",
+          700: "#A35568",
+          800: "#874755",
+          900: "#6E3B46",
+          950: "#3D1F26",
         },
-        // Secondary accent - Deep teal for contrast
+        // Secondary accent - Slate blue for sophistication
         accent: {
-          50: "#F0FDFC",
-          100: "#CCFBF6",
-          200: "#99F6ED",
-          300: "#5EEADB",
-          400: "#2DD4BF",
-          500: "#14B8A6",
-          600: "#0D9488",
-          700: "#0F766E",
-          800: "#115E59",
-          900: "#134E4A",
-          950: "#042F2E",
+          50: "#F8FAFC",
+          100: "#F1F5F9",
+          200: "#E2E8F0",
+          300: "#CBD5E1",
+          400: "#94A3B8",
+          500: "#64748B", // Slate blue
+          600: "#475569",
+          700: "#334155",
+          800: "#1E293B",
+          900: "#0F172A",
+          950: "#020617",
         },
-        // Neutral slate with warm undertones
+        // Neutral warm grays
         surface: {
-          50: "#FAFAF9",
-          100: "#F5F5F4",
-          200: "#E7E5E4",
-          300: "#D6D3D1",
-          400: "#A8A29E",
-          500: "#78716C",
-          600: "#57534E",
-          700: "#44403C",
-          800: "#292524",
-          900: "#1C1917",
-          950: "#0C0A09",
+          50: "#FAFAFA",
+          100: "#F5F5F5",
+          200: "#E5E5E5",
+          300: "#D4D4D4",
+          400: "#A3A3A3",
+          500: "#737373",
+          600: "#525252",
+          700: "#404040",
+          800: "#262626",
+          900: "#171717",
+          950: "#0A0A0A",
         },
-        // Success/celebration green
+        // Success green (keeping muted)
         success: {
           50: "#F0FDF4",
           100: "#DCFCE7",
@@ -65,7 +65,7 @@ const config: Config = {
           800: "#166534",
           900: "#14532D",
         },
-        // Warning/attention amber
+        // Warning amber (keeping muted)
         warning: {
           50: "#FFFBEB",
           100: "#FEF3C7",
@@ -78,7 +78,7 @@ const config: Config = {
           800: "#92400E",
           900: "#78350F",
         },
-        // Error/destructive red
+        // Error red (keeping muted)
         error: {
           50: "#FEF2F2",
           100: "#FEE2E2",
@@ -117,8 +117,8 @@ const config: Config = {
         "5xl": "2.5rem",
       },
       boxShadow: {
-        "glow": "0 0 40px -10px rgba(255, 107, 71, 0.3)",
-        "glow-lg": "0 0 60px -15px rgba(255, 107, 71, 0.4)",
+        "glow": "0 0 40px -10px rgba(212, 145, 159, 0.3)",
+        "glow-lg": "0 0 60px -15px rgba(212, 145, 159, 0.4)",
         "inner-glow": "inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)",
         "card": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
         "card-hover": "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)",
@@ -168,8 +168,8 @@ const config: Config = {
           "50%": { transform: "translateY(-5px)" },
         },
         pulseGlow: {
-          "0%, 100%": { boxShadow: "0 0 20px -5px rgba(255, 107, 71, 0.3)" },
-          "50%": { boxShadow: "0 0 40px -5px rgba(255, 107, 71, 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 20px -5px rgba(212, 145, 159, 0.3)" },
+          "50%": { boxShadow: "0 0 40px -5px rgba(212, 145, 159, 0.5)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
