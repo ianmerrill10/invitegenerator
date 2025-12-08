@@ -8,7 +8,6 @@ import {
   Filter,
   Sparkles,
   Lock,
-  Star,
   Heart,
   Gift,
   Briefcase,
@@ -37,6 +36,7 @@ const categories: { id: EventType | "all"; name: string; icon: React.ReactNode }
 ];
 
 // Mock templates data
+// Template data - ratings/uses removed as we don't have real data yet
 const mockTemplates = [
   {
     id: "1",
@@ -44,8 +44,6 @@ const mockTemplates = [
     category: "wedding",
     isPremium: false,
     thumbnail: "#FF6B47",
-    rating: 4.8,
-    uses: 1250,
   },
   {
     id: "2",
@@ -53,8 +51,6 @@ const mockTemplates = [
     category: "wedding",
     isPremium: true,
     thumbnail: "#14B8A6",
-    rating: 4.9,
-    uses: 980,
   },
   {
     id: "3",
@@ -62,8 +58,6 @@ const mockTemplates = [
     category: "birthday",
     isPremium: false,
     thumbnail: "#FCD34D",
-    rating: 4.7,
-    uses: 2100,
   },
   {
     id: "4",
@@ -71,8 +65,6 @@ const mockTemplates = [
     category: "birthday",
     isPremium: true,
     thumbnail: "#F59E0B",
-    rating: 4.6,
-    uses: 750,
   },
   {
     id: "5",
@@ -80,8 +72,6 @@ const mockTemplates = [
     category: "baby_shower",
     isPremium: false,
     thumbnail: "#EC4899",
-    rating: 4.9,
-    uses: 1500,
   },
   {
     id: "6",
@@ -89,8 +79,6 @@ const mockTemplates = [
     category: "corporate",
     isPremium: true,
     thumbnail: "#3B82F6",
-    rating: 4.5,
-    uses: 620,
   },
   {
     id: "7",
@@ -98,8 +86,6 @@ const mockTemplates = [
     category: "holiday",
     isPremium: false,
     thumbnail: "#EF4444",
-    rating: 4.8,
-    uses: 3200,
   },
   {
     id: "8",
@@ -107,8 +93,6 @@ const mockTemplates = [
     category: "graduation",
     isPremium: false,
     thumbnail: "#8B5CF6",
-    rating: 4.7,
-    uses: 890,
   },
   {
     id: "9",
@@ -116,8 +100,6 @@ const mockTemplates = [
     category: "wedding",
     isPremium: true,
     thumbnail: "#78716C",
-    rating: 4.9,
-    uses: 1100,
   },
   {
     id: "10",
@@ -125,8 +107,6 @@ const mockTemplates = [
     category: "birthday",
     isPremium: false,
     thumbnail: "#6366F1",
-    rating: 4.6,
-    uses: 1800,
   },
   {
     id: "11",
@@ -134,8 +114,6 @@ const mockTemplates = [
     category: "baby_shower",
     isPremium: true,
     thumbnail: "#10B981",
-    rating: 4.8,
-    uses: 920,
   },
   {
     id: "12",
@@ -143,8 +121,6 @@ const mockTemplates = [
     category: "corporate",
     isPremium: true,
     thumbnail: "#1C1917",
-    rating: 4.7,
-    uses: 450,
   },
 ];
 
@@ -274,13 +250,9 @@ export default function TemplatesPage() {
                 {/* Info */}
                 <div className="p-4">
                   <h3 className="font-medium text-surface-900 mb-1">{template.name}</h3>
-                  <div className="flex items-center justify-between text-sm text-surface-500">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-warning-500 fill-warning-500" />
-                      <span>{template.rating}</span>
-                    </div>
-                    <span>{template.uses.toLocaleString()} uses</span>
-                  </div>
+                  <p className="text-sm text-surface-500 capitalize">
+                    {template.category.replace("_", " ")}
+                  </p>
                 </div>
               </Card>
             </motion.div>

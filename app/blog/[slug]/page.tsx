@@ -337,7 +337,7 @@ export default function BlogPostPage() {
                   Ready to Create Your Invitation?
                 </h3>
                 <p className="text-white/80 mb-6 max-w-lg mx-auto">
-                  Use AI to design stunning invitations in minutes. Join thousands of happy users creating beautiful event invitations.
+                  Use AI to design stunning invitations in minutes. Create beautiful event invitations with no design skills required.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button asChild variant="secondary" size="lg" className="bg-white text-brand-600 hover:bg-white/90">

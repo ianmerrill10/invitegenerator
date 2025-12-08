@@ -266,8 +266,8 @@ export default function FeaturesPage() {
               Ready to Create Your First Invitation?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of happy users who've created beautiful invitations
-              with InviteGenerator. It's free to get started!
+              Create beautiful invitations with AI-powered design tools.
+              It's free to get started, no credit card required!
             </p>
             <Link href="/auth/signup">
               <Button
