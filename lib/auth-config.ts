@@ -8,7 +8,7 @@
 export const AUTH_CONFIG = {
   // Only these emails can log in
   ALLOWED_EMAILS: [
-    "ianmerrll10@gmail.com",
+    "ianmerrill10@gmail.com",
     // Add more emails here as needed:
     // "another@email.com",
   ],
