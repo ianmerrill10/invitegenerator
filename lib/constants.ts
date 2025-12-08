@@ -89,6 +89,7 @@ export const PRICING_PLANS: PlanFeatures[] = [
       "Basic templates",
       "Email support",
       "Standard RSVP tracking",
+      "Free event website",
     ],
   },
   {
@@ -114,6 +115,8 @@ export const PRICING_PLANS: PlanFeatures[] = [
       "RSVP management",
       "Custom event URL",
       "Email reminders",
+      "50 digital delivery credits/mo",
+      "5% off print bundles",
     ],
   },
   {
@@ -141,6 +144,11 @@ export const PRICING_PLANS: PlanFeatures[] = [
       "Custom domain",
       "Guest messaging",
       "Export to PDF/PNG",
+      "Premium event website included",
+      "150 digital delivery credits/mo",
+      "25 SMS credits/mo",
+      "10% off print bundles",
+      "10% off rush processing",
     ],
   },
   {
@@ -168,6 +176,12 @@ export const PRICING_PLANS: PlanFeatures[] = [
       "Custom integrations",
       "SLA guarantee",
       "Advanced security",
+      "Pro event website included",
+      "Unlimited digital delivery",
+      "100 SMS credits/mo",
+      "15% off print bundles",
+      "25% off rush processing",
+      "Free envelope addressing (100/mo)",
     ],
   },
 ];
