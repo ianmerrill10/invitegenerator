@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
+import { AUTH_CONFIG } from "@/lib/auth-config";
 
 const dynamoClient = new DynamoDBClient({
   region: process.env.AWS_REGION || "us-east-1",
@@ -83,6 +84,11 @@ export async function GET(
     const profile = await fetchUserProfile(provider, tokens.access_token);
     if (!profile) {
       return redirectToLogin("Failed to fetch user profile");
+    }
+
+    // Check if email is in the allowed list
+    if (!profile.email || !AUTH_CONFIG.isEmailAllowed(profile.email)) {
+      return redirectToLogin("Access denied. This email is not authorized.");
     }
 
     // Add token info to profile
@@ -155,6 +161,11 @@ export async function POST(
     const profile = decodeAppleIdToken(idToken || tokens.id_token, appleUser);
     if (!profile) {
       return redirectToLogin("Failed to decode Apple ID token");
+    }
+
+    // Check if email is in the allowed list
+    if (!profile.email || !AUTH_CONFIG.isEmailAllowed(profile.email)) {
+      return redirectToLogin("Access denied. This email is not authorized.");
     }
 
     profile.accessToken = tokens.access_token;

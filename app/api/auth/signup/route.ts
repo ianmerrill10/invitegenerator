@@ -9,6 +9,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
+import { AUTH_CONFIG } from "@/lib/auth-config";
 
 // Initialize AWS clients
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -66,6 +67,11 @@ export async function POST(request: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return errorResponse("Please enter a valid email address");
+    }
+
+    // Check if email is in the allowed list
+    if (!AUTH_CONFIG.isEmailAllowed(email)) {
+      return errorResponse("Access denied. This email is not authorized to sign up.", 403);
     }
 
     const passwordError = validatePassword(password);
