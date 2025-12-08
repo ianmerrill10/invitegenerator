@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthStore>()(
       // Initial state
       user: null,
       isAuthenticated: false,
-      isLoading: true,
+      isLoading: false,
       error: null,
 
       // Actions

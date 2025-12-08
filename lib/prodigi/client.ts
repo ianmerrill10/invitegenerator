@@ -337,5 +337,19 @@ export async function createPrintOrder(
   });
 }
 
-// Export singleton for convenience
-export const prodigiClient = new ProdigiClient();
+// Lazy-loaded singleton to avoid build-time errors when env vars aren't set
+let _prodigiClient: ProdigiClient | null = null;
+
+export function getProdigiClient(): ProdigiClient {
+  if (!_prodigiClient) {
+    _prodigiClient = new ProdigiClient();
+  }
+  return _prodigiClient;
+}
+
+// For backwards compatibility - use getProdigiClient() instead
+export const prodigiClient = {
+  get instance() {
+    return getProdigiClient();
+  },
+};
