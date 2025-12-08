@@ -16,9 +16,16 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, UpdateCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-02-24.acacia",
-});
+// Lazy-loaded Stripe client to avoid build-time errors when env vars aren't set
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+      apiVersion: "2025-02-24.acacia",
+    });
+  }
+  return _stripe;
+}
 
 const dynamoClient = new DynamoDBClient({
   region: process.env.AWS_REGION || "us-east-1",
@@ -57,12 +64,12 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET || ""
     );
-  } catch (err) {
+  }catch (err) {
     console.error("Webhook signature verification failed:", err);
     return NextResponse.json(
       { error: "Invalid signature" },
@@ -120,7 +127,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
 
   // Get subscription details
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
   const priceId = subscription.items.data[0]?.price.id;
   const plan = PRICE_TO_PLAN[priceId] || "free";
   const credits = PLAN_CREDITS[plan] || 5;
