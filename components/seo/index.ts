@@ -17,5 +17,4 @@ export {
   BreadcrumbSchema,
   HowToSchema,
   SoftwareApplicationSchema,
-  LocalBusinessSchema,
 } from "./structured-data";
