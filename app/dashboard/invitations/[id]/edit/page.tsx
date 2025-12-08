@@ -23,8 +23,6 @@ import {
   Grid,
   Move,
   Trash2,
-  ExternalLink,
-  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -72,7 +70,6 @@ export default function InvitationEditorPage() {
   const [activeTab, setActiveTab] = React.useState<"elements" | "design" | "settings">("elements");
   const [saving, setSaving] = React.useState(false);
   const [hasChanges, setHasChanges] = React.useState(false);
-  const [canvaLoading, setCanvaLoading] = React.useState(false);
 
   const canvasRef = React.useRef<HTMLDivElement>(null);
 
@@ -170,44 +167,6 @@ export default function InvitationEditorPage() {
     }
   };
 
-  // Edit in Canva
-  const handleEditInCanva = async () => {
-    if (!currentInvitation) return;
-
-    setCanvaLoading(true);
-    try {
-      const response = await fetch("/api/canva/create-design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: `${currentInvitation.title} - Edit`,
-          designType: "Poster",
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        if (result.error.includes("Not authenticated")) {
-          alert("Please connect your Canva account in the Admin panel first");
-          return;
-        }
-        throw new Error(result.error);
-      }
-
-      if (result.data?.editUrl) {
-        window.open(result.data.editUrl, "_blank");
-      } else {
-        throw new Error("No edit URL returned");
-      }
-    } catch (error) {
-      console.error("Canva error:", error);
-      alert("Failed to open Canva. Please try again.");
-    } finally {
-      setCanvaLoading(false);
-    }
-  };
-
   // Get selected element
   const selectedEl = elements.find((el) => el.id === selectedElement);
 
@@ -242,17 +201,6 @@ export default function InvitationEditorPage() {
           {hasChanges && (
             <span className="text-sm text-warning-600 mr-2">Unsaved changes</span>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEditInCanva}
-            disabled={canvaLoading}
-            leftIcon={canvaLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Palette className="h-4 w-4" />}
-            rightIcon={<ExternalLink className="h-3 w-3" />}
-            className="bg-gradient-to-r from-[#00C4CC]/10 to-[#7B2FF7]/10 border-[#00C4CC]/30 hover:border-[#00C4CC]/50"
-          >
-            {canvaLoading ? "Opening..." : "Edit in Canva"}
-          </Button>
           <Button variant="outline" size="sm" leftIcon={<Eye className="h-4 w-4" />}>
             Preview
           </Button>
@@ -468,26 +416,6 @@ export default function InvitationEditorPage() {
                       </button>
                     ))}
                   </div>
-                </div>
-
-                {/* Canva Pro Promotion */}
-                <div className="p-3 bg-gradient-to-br from-[#00C4CC]/10 to-[#7B2FF7]/10 rounded-lg border border-[#00C4CC]/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Palette className="h-4 w-4 text-[#7B2FF7]" />
-                    <h3 className="text-sm font-medium text-surface-700">Need more features?</h3>
-                  </div>
-                  <p className="text-xs text-surface-600 mb-3">
-                    Unlock premium templates, background remover, and Brand Kit with Canva Pro.
-                  </p>
-                  <a
-                    href="https://www.canva.com/pro/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1 w-full px-3 py-2 text-xs font-medium text-white bg-gradient-to-r from-[#00C4CC] to-[#7B2FF7] rounded-lg hover:opacity-90 transition-opacity"
-                  >
-                    Try Canva Pro Free
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
                 </div>
               </div>
             )}

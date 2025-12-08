@@ -25,8 +25,6 @@ import {
   Building,
   GraduationCap,
   PartyPopper,
-  Palette,
-  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -84,8 +82,7 @@ export default function CreateInvitationPage() {
   
   const [currentStep, setCurrentStep] = React.useState(1);
   const [selectedEventType, setSelectedEventType] = React.useState<EventType | null>(null);
-  const [creationMethod, setCreationMethod] = React.useState<"ai" | "template" | "canva" | null>(null);
-  const [canvaLoading, setCanvaLoading] = React.useState(false);
+  const [creationMethod, setCreationMethod] = React.useState<"ai" | "template" | null>(null);
   const [aiStyle, setAiStyle] = React.useState({
     aesthetic: "modern",
     formality: "semi-formal",
@@ -138,52 +135,6 @@ export default function CreateInvitationPage() {
     }
   };
 
-  // Handle Canva design creation
-  const handleCanvaDesign = async (invitationId: string, title: string) => {
-    setCanvaLoading(true);
-    try {
-      // Create a design in Canva
-      const response = await fetch("/api/canva/create-design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: `${title} - Invitation`,
-          designType: "Poster", // Poster works well for invitations
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        // If not connected to Canva, redirect to auth
-        if (result.error.includes("Not authenticated")) {
-          toast.error("Please connect your Canva account first");
-          // Store the invitation ID to return to after Canva auth
-          sessionStorage.setItem("canva_return_invitation", invitationId);
-          router.push("/api/canva/auth");
-          return;
-        }
-        throw new Error(result.error);
-      }
-
-      // Store the Canva design ID with the invitation for later reference
-      // Open Canva editor in new tab
-      if (result.data?.editUrl) {
-        toast.success("Opening Canva editor...");
-        window.open(result.data.editUrl, "_blank");
-        router.push(`/dashboard/invitations/${invitationId}`);
-      } else {
-        throw new Error("No edit URL returned from Canva");
-      }
-    } catch (error) {
-      console.error("Canva error:", error);
-      toast.error("Failed to open Canva. Please try again.");
-      router.push(`/dashboard/invitations/${invitationId}/edit`);
-    } finally {
-      setCanvaLoading(false);
-    }
-  };
-
   // Handle form submission
   const onSubmit = async (data: FormData) => {
     try {
@@ -207,13 +158,7 @@ export default function CreateInvitationPage() {
       } as CreateInvitationFormData);
 
       toast.success("Invitation created successfully!");
-
-      // If Canva method, redirect to Canva
-      if (creationMethod === "canva") {
-        await handleCanvaDesign(invitation.id, data.title);
-      } else {
-        router.push(`/dashboard/invitations/${invitation.id}/edit`);
-      }
+      router.push(`/dashboard/invitations/${invitation.id}/edit`);
     } catch (error) {
       toast.error("Failed to create invitation. Please try again.");
     } finally {
@@ -499,7 +444,7 @@ export default function CreateInvitationPage() {
                 </h2>
 
                 {/* Creation method selection */}
-                <div className="grid md:grid-cols-3 gap-4 mb-8">
+                <div className="grid md:grid-cols-2 gap-4 mb-8">
                   <button
                     type="button"
                     onClick={() => setCreationMethod("ai")}
@@ -516,7 +461,7 @@ export default function CreateInvitationPage() {
                     <h3 className="font-heading font-semibold text-lg text-surface-900 mb-1">
                       Generate with AI
                     </h3>
-                    <p className="text-surface-500 text-sm">
+                    <p className="text-surface-500">
                       Let our AI create a unique design based on your preferences
                     </p>
                     <Badge variant="primary" className="mt-3">
@@ -541,82 +486,14 @@ export default function CreateInvitationPage() {
                     <h3 className="font-heading font-semibold text-lg text-surface-900 mb-1">
                       Choose a Template
                     </h3>
-                    <p className="text-surface-500 text-sm">
+                    <p className="text-surface-500">
                       Browse our library of professionally designed templates
                     </p>
                     <Badge variant="default" className="mt-3">
                       Free
                     </Badge>
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCreationMethod("canva")}
-                    className={cn(
-                      "p-6 rounded-xl border-2 text-left transition-all",
-                      creationMethod === "canva"
-                        ? "border-brand-500 bg-brand-50"
-                        : "border-surface-200 hover:border-surface-300"
-                    )}
-                  >
-                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-[#00C4CC] to-[#7B2FF7] flex items-center justify-center mb-4 text-white">
-                      <Palette className="h-7 w-7" />
-                    </div>
-                    <h3 className="font-heading font-semibold text-lg text-surface-900 mb-1">
-                      Design with Canva
-                    </h3>
-                    <p className="text-surface-500 text-sm">
-                      Use Canva's powerful design tools to create your invitation
-                    </p>
-                    <Badge variant="secondary" className="mt-3">
-                      <ExternalLink className="h-3 w-3" />
-                      Opens Canva
-                    </Badge>
-                  </button>
                 </div>
-
-                {/* Canva info (only shown when Canva is selected) */}
-                {creationMethod === "canva" && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="mb-8"
-                  >
-                    <div className="p-4 bg-gradient-to-br from-[#00C4CC]/10 to-[#7B2FF7]/10 rounded-xl border border-[#00C4CC]/30">
-                      <h3 className="font-heading font-semibold text-surface-900 mb-3 flex items-center gap-2">
-                        <Palette className="h-5 w-5 text-[#00C4CC]" />
-                        How It Works
-                      </h3>
-                      <ol className="space-y-2 text-sm text-surface-600">
-                        <li className="flex items-start gap-2">
-                          <span className="h-5 w-5 rounded-full bg-[#00C4CC] text-white flex items-center justify-center text-xs shrink-0">1</span>
-                          <span>We'll save your invitation details</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="h-5 w-5 rounded-full bg-[#00C4CC] text-white flex items-center justify-center text-xs shrink-0">2</span>
-                          <span>You'll be redirected to Canva's design editor</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="h-5 w-5 rounded-full bg-[#00C4CC] text-white flex items-center justify-center text-xs shrink-0">3</span>
-                          <span>Design your invitation with Canva's tools and templates</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="h-5 w-5 rounded-full bg-[#00C4CC] text-white flex items-center justify-center text-xs shrink-0">4</span>
-                          <span>Export back to InviteGenerator to manage RSVPs</span>
-                        </li>
-                      </ol>
-                      <div className="mt-4 p-3 bg-white/80 rounded-lg">
-                        <p className="text-xs text-surface-500">
-                          <strong>Pro Tip:</strong> Canva Pro users get access to premium templates,
-                          background remover, and Brand Kit features.
-                          <a href="https://www.canva.com/pro/" target="_blank" rel="noopener noreferrer" className="text-[#7B2FF7] hover:underline ml-1">
-                            Try Canva Pro →
-                          </a>
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
 
                 {/* AI Style options (only shown when AI is selected) */}
                 {creationMethod === "ai" && (
@@ -716,23 +593,18 @@ export default function CreateInvitationPage() {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!creationMethod || isLoading || isGenerating || canvaLoading}
-                    loading={isGenerating || canvaLoading}
+                    disabled={!creationMethod || isLoading || isGenerating}
+                    loading={isGenerating}
                     leftIcon={
                       creationMethod === "ai" ? (
                         <Sparkles className="h-4 w-4" />
-                      ) : creationMethod === "canva" ? (
-                        <Palette className="h-4 w-4" />
                       ) : (
                         <Layout className="h-4 w-4" />
                       )
                     }
-                    rightIcon={creationMethod === "canva" ? <ExternalLink className="h-4 w-4" /> : undefined}
                   >
                     {creationMethod === "ai"
                       ? "Generate with AI"
-                      : creationMethod === "canva"
-                      ? "Create & Open Canva"
                       : "Choose Template"}
                   </Button>
                 </div>
