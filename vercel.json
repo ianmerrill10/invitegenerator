@@ -1,12 +1,5 @@
 {
-  "crons": [
-    {
-      "path": "/api/blog/scheduler",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/blog/scheduler?action=publish",
-      "schedule": "0 */6 * * *"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs"
 }
