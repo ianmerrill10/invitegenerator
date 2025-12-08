@@ -11,6 +11,7 @@ const badgeVariants = cva(
       variant: {
         default: "bg-surface-100 text-surface-700",
         primary: "bg-brand-100 text-brand-700",
+        brand: "bg-brand-100 text-brand-700",
         secondary: "bg-accent-100 text-accent-700",
         success: "bg-success-100 text-success-700",
         warning: "bg-warning-100 text-warning-700",
@@ -56,7 +57,7 @@ function Badge({
         <span
           className={cn(
             "h-1.5 w-1.5 rounded-full",
-            variant === "primary" && "bg-brand-500",
+            (variant === "primary" || variant === "brand") && "bg-brand-500",
             variant === "secondary" && "bg-accent-500",
             variant === "success" && "bg-success-500",
             variant === "warning" && "bg-warning-500",

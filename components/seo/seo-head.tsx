@@ -18,7 +18,7 @@ interface SEOProps {
   keywords?: string[];
   canonical?: string;
   ogImage?: string;
-  ogType?: "website" | "article" | "product";
+  ogType?: "website" | "article";
   article?: {
     publishedTime?: string;
     modifiedTime?: string;
