@@ -242,7 +242,7 @@ export default function TemplatesPage() {
                       <div className="absolute inset-0 bg-surface-900/0 group-hover:bg-surface-900/60 transition-colors duration-300 flex items-center justify-center">
                         <Link href="/auth/signup">
                           <Button
-                            variant="default"
+                            variant="primary"
                             className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                           >
                             Use Template
