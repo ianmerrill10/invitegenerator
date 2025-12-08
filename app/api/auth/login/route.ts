@@ -34,7 +34,10 @@ function errorResponse(message: string, status: number = 400) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email: rawEmail, password } = body;
+
+    // Normalize email to lowercase for case-insensitive login
+    const email = rawEmail?.toLowerCase().trim();
 
     // Validate input
     if (!email || !password) {
