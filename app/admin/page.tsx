@@ -647,7 +647,35 @@ Please provide:
               <CardHeader>
                 <CardTitle>Integration Features</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-6">
+                {/* How Edit in Canva Works */}
+                <div className="p-4 bg-brand-50 rounded-xl border border-brand-200">
+                  <h3 className="font-heading font-semibold text-surface-900 mb-3">
+                    How "Edit in Canva" Works
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div className="text-center">
+                      <div className="h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
+                      <p className="text-xs text-surface-600">User clicks "Edit in Canva"</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
+                      <p className="text-xs text-surface-600">API creates design with invitation</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+                      <p className="text-xs text-surface-600">User edits in Canva's full editor</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center mx-auto mb-2 text-sm font-bold">4</div>
+                      <p className="text-xs text-surface-600">Export back to InviteGenerator</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-surface-500 mt-3 text-center">
+                    The edit_url is valid for 30 days and opens Canva's editor for the specific design
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-surface-50 rounded-xl border border-surface-200">
                     <div className="flex items-center gap-3 mb-3">
@@ -655,17 +683,18 @@ Please provide:
                         <Upload className="h-5 w-5 text-brand-600" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-surface-900">Export to Canva</h3>
-                        <p className="text-sm text-surface-600">Send invitations to Canva for editing</p>
+                        <h3 className="font-heading font-semibold text-surface-900">Edit in Canva</h3>
+                        <p className="text-sm text-surface-600">Open invitation in Canva's full editor</p>
                       </div>
                     </div>
                     <Button
-                      variant="outline"
+                      variant="primary"
                       size="sm"
                       className="w-full"
                       disabled={!canvaStatus.connected}
+                      rightIcon={<ExternalLink className="h-4 w-4" />}
                     >
-                      Export Invitation
+                      Create & Edit Design
                     </Button>
                   </div>
 
@@ -688,6 +717,25 @@ Please provide:
                       View Designs
                     </Button>
                   </div>
+                </div>
+
+                {/* Commercial Use Notice */}
+                <div className="p-4 bg-success-50 rounded-xl border border-success-200">
+                  <h4 className="font-semibold text-success-800 flex items-center gap-2 mb-2">
+                    <DollarSign className="h-4 w-4" />
+                    Selling Invitations - Commercial Use Allowed
+                  </h4>
+                  <p className="text-sm text-success-700 mb-2">
+                    Yes, you CAN sell invitations created with Canva! Section 5 of Canva's Content License explicitly allows:
+                  </p>
+                  <ul className="text-sm text-success-700 space-y-1">
+                    <li>✓ "invitations, advertising and promotional projects"</li>
+                    <li>✓ "prints, posters and other reproductions for resale"</li>
+                    <li>✓ "without any reproduction quantity limit"</li>
+                  </ul>
+                  <p className="text-xs text-success-600 mt-2">
+                    Just ensure designs are original (combine multiple elements), don't sell Canva content standalone.
+                  </p>
                 </div>
               </CardContent>
             </Card>
