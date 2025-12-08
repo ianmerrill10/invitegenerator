@@ -7,6 +7,7 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
+import { AUTH_CONFIG } from "@/lib/auth-config";
 
 // Initialize AWS clients
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -38,6 +39,11 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!email || !password) {
       return errorResponse("Email and password are required");
+    }
+
+    // Check if email is in the allowed list
+    if (!AUTH_CONFIG.isEmailAllowed(email)) {
+      return errorResponse("Access denied. This email is not authorized.", 403);
     }
 
     // Authenticate with Cognito

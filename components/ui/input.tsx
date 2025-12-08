@@ -6,6 +6,7 @@ import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
   error?: string;
   success?: string;
   leftIcon?: React.ReactNode;
@@ -18,12 +19,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     {
       className,
       type,
+      label,
       error,
       success,
       leftIcon,
       rightIcon,
       showPasswordToggle,
       disabled,
+      id,
       ...props
     },
     ref
@@ -31,40 +34,53 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = React.useState(false);
     const isPassword = type === "password";
     const inputType = isPassword && showPassword ? "text" : type;
+    const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
     return (
-      <div className="relative">
-        {/* Left icon */}
-        {leftIcon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none">
-            {leftIcon}
-          </div>
+      <div>
+        {/* Label */}
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium text-surface-700 mb-1.5"
+          >
+            {label}
+          </label>
         )}
 
-        {/* Input field */}
-        <input
-          type={inputType}
-          className={cn(
-            "flex h-12 w-full rounded-xl border bg-white px-4 py-3",
-            "text-surface-900 font-body text-base transition-colors duration-200",
-            "placeholder:text-surface-400",
-            "hover:border-surface-400",
-            "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none",
-            "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-100",
-            leftIcon && "pl-12",
-            (rightIcon || (isPassword && showPasswordToggle) || error || success) && "pr-12",
-            error && "border-error-500 focus:border-error-500 focus:ring-error-500/20",
-            success && "border-success-500 focus:border-success-500 focus:ring-success-500/20",
-            !error && !success && "border-surface-300",
-            className
+        <div className="relative">
+          {/* Left icon */}
+          {leftIcon && (
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none">
+              {leftIcon}
+            </div>
           )}
-          ref={ref}
-          disabled={disabled}
-          {...props}
-        />
 
-        {/* Right side icons */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+          {/* Input field */}
+          <input
+            id={inputId}
+            type={inputType}
+            className={cn(
+              "flex h-12 w-full rounded-xl border bg-white px-4 py-3",
+              "text-surface-900 font-body text-base transition-colors duration-200",
+              "placeholder:text-surface-400",
+              "hover:border-surface-400",
+              "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none",
+              "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-100",
+              leftIcon && "pl-12",
+              (rightIcon || (isPassword && showPasswordToggle) || error || success) && "pr-12",
+              error && "border-error-500 focus:border-error-500 focus:ring-error-500/20",
+              success && "border-success-500 focus:border-success-500 focus:ring-success-500/20",
+              !error && !success && "border-surface-300",
+              className
+            )}
+            ref={ref}
+            disabled={disabled}
+            {...props}
+          />
+
+          {/* Right side icons */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {/* Status icons */}
           {error && !isPassword && (
             <AlertCircle className="h-5 w-5 text-error-500" />
@@ -94,6 +110,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               )}
             </button>
           )}
+          </div>
         </div>
 
         {/* Error message */}
