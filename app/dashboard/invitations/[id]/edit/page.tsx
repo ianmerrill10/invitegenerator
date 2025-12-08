@@ -23,6 +23,7 @@ import {
   Grid,
   Move,
   Trash2,
+  Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -213,6 +214,16 @@ export default function InvitationEditorPage() {
           >
             {saving ? "Saving..." : "Save"}
           </Button>
+          <Link href={`/dashboard/invitations/${id}/order`}>
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<Printer className="h-4 w-4" />}
+              className="bg-brand-500 hover:bg-brand-600 text-white"
+            >
+              Order Prints
+            </Button>
+          </Link>
         </div>
       </div>
 
