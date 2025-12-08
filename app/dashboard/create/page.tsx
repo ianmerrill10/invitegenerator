@@ -143,10 +143,10 @@ export default function CreateInvitationPage() {
       // If using AI, call AI generation endpoint
       if (creationMethod === "ai") {
         toast.loading("AI is creating your invitation...");
-        
+
         // Simulate AI generation (replace with actual API call)
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        
+
         toast.dismiss();
       }
 

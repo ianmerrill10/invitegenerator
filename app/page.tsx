@@ -211,13 +211,15 @@ export default function LandingPage() {
                       Create Free Invitation
                     </Button>
                   </Link>
-                  <Button
-                    variant="outline"
-                    size="xl"
-                    leftIcon={<Play className="h-5 w-5" />}
-                  >
-                    Watch Demo
-                  </Button>
+                  <Link href="/how-it-works">
+                    <Button
+                      variant="outline"
+                      size="xl"
+                      leftIcon={<Play className="h-5 w-5" />}
+                    >
+                      Watch Demo
+                    </Button>
+                  </Link>
                 </motion.div>
 
                 {/* Social Proof */}

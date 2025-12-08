@@ -409,3 +409,255 @@ export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 export type Nullable<T> = T | null;
 
 export type ValueOf<T> = T[keyof T];
+
+// ==================== EVENT WEBSITE TYPES ====================
+export interface EventWebsite {
+  id: string;
+  invitationId: string;
+  userId: string;
+  subdomain: string; // e.g., "john-jane" for john-jane.invitegenerator.com
+  customDomain?: string; // e.g., "johnandjanewedding.com"
+  tier: EventWebsiteTier;
+  template: string;
+  settings: EventWebsiteSettings;
+  sections: EventWebsiteSection[];
+  seo: EventWebsiteSEO;
+  analytics: WebsiteAnalytics;
+  status: "draft" | "published" | "archived";
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  expiresAt?: string; // For time-limited events
+}
+
+export type EventWebsiteTier = "free" | "premium" | "pro";
+
+export interface EventWebsiteSettings {
+  passwordProtected: boolean;
+  password?: string;
+  showRsvp: boolean;
+  showRegistry: boolean;
+  showGallery: boolean;
+  showAccommodations: boolean;
+  showTravel: boolean;
+  showFaq: boolean;
+  showTimeline: boolean;
+  backgroundColor: string;
+  primaryColor: string;
+  fontFamily: string;
+  customCss?: string;
+  backgroundMusic?: string;
+  showCountdown: boolean;
+}
+
+export interface EventWebsiteSection {
+  id: string;
+  type: WebsiteSectionType;
+  title: string;
+  content: string;
+  order: number;
+  visible: boolean;
+  settings: Record<string, unknown>;
+}
+
+export type WebsiteSectionType =
+  | "hero"
+  | "story"
+  | "details"
+  | "rsvp"
+  | "registry"
+  | "gallery"
+  | "accommodations"
+  | "travel"
+  | "faq"
+  | "timeline"
+  | "party" // Wedding party, etc.
+  | "custom";
+
+export interface EventWebsiteSEO {
+  title: string;
+  description: string;
+  ogImage?: string;
+  noIndex: boolean;
+}
+
+export interface WebsiteAnalytics {
+  totalViews: number;
+  uniqueVisitors: number;
+  rsvpConversionRate: number;
+  topReferrers: Record<string, number>;
+  viewsByDate: Array<{ date: string; views: number }>;
+}
+
+// ==================== DIGITAL DELIVERY TYPES ====================
+export interface DeliveryJob {
+  id: string;
+  invitationId: string;
+  userId: string;
+  method: DeliveryMethod;
+  status: DeliveryStatus;
+  recipients: DeliveryRecipient[];
+  scheduledFor?: string;
+  sentAt?: string;
+  completedAt?: string;
+  stats: DeliveryStats;
+  createdAt: string;
+}
+
+export type DeliveryMethod = "email" | "premiumEmail" | "sms" | "whatsapp";
+
+export type DeliveryStatus =
+  | "pending"
+  | "scheduled"
+  | "sending"
+  | "completed"
+  | "partial"
+  | "failed";
+
+export interface DeliveryRecipient {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  status: "pending" | "sent" | "delivered" | "opened" | "clicked" | "failed" | "bounced";
+  sentAt?: string;
+  deliveredAt?: string;
+  openedAt?: string;
+  clickedAt?: string;
+  errorMessage?: string;
+}
+
+export interface DeliveryStats {
+  total: number;
+  sent: number;
+  delivered: number;
+  opened: number;
+  clicked: number;
+  failed: number;
+  bounced: number;
+}
+
+export interface DeliveryCreditBalance {
+  userId: string;
+  email: number;
+  premiumEmail: number;
+  sms: number;
+  whatsapp: number;
+  updatedAt: string;
+}
+
+// ==================== STATIONERY BUNDLE TYPES ====================
+export interface StationeryBundle {
+  id: string;
+  name: string;
+  description: string;
+  products: StationeryProduct[];
+  pricePerSet: number;
+  savings: string;
+  popular: boolean;
+}
+
+export interface StationeryProduct {
+  id: string;
+  name: string;
+  description: string;
+  sku: string;
+  category: "pre-event" | "main" | "event-day" | "post-event" | "extras";
+  dimensions: { width: number; height: number; units: string };
+  includesEnvelope: boolean;
+  paperWeight: string;
+}
+
+export interface BundleOrder {
+  id: string;
+  userId: string;
+  invitationId: string;
+  bundleId: string;
+  quantity: number;
+  customizations: BundleCustomization[];
+  pricing: BundlePricing;
+  rushProcessing?: RushProcessingOption;
+  shippingAddress: ShippingAddress;
+  status: OrderStatus;
+  prodigiOrderIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BundleCustomization {
+  productId: string;
+  designUrl: string;
+  quantity: number;
+}
+
+export interface BundlePricing {
+  subtotal: number;
+  bundleDiscount: number;
+  quantityDiscount: number;
+  tierDiscount: number;
+  rushFee: number;
+  shippingCost: number;
+  tax: number;
+  total: number;
+}
+
+export interface RushProcessingOption {
+  type: "standard" | "rush" | "priority" | "sameDay";
+  fee: number;
+  estimatedShipDate: string;
+}
+
+export interface ShippingAddress {
+  name: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phone?: string;
+}
+
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "processing"
+  | "printing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "refunded";
+
+// ==================== ADD-ON TYPES ====================
+export interface AddOnPurchase {
+  id: string;
+  userId: string;
+  type: AddOnType;
+  quantity: number;
+  price: number;
+  status: "pending" | "completed" | "refunded";
+  metadata?: Record<string, unknown>;
+  createdAt: string;
+}
+
+export type AddOnType =
+  | "aiCredits"
+  | "deliveryCredits"
+  | "customDesign"
+  | "designReview"
+  | "addressCollection"
+  | "envelopeAddressing"
+  | "waxSeals"
+  | "ribbons"
+  | "photoEnhancement";
+
+// ==================== ENHANCED PLAN FEATURES ====================
+export interface EnhancedPlanFeatures extends PlanFeatures {
+  digitalDeliveryCredits: number;
+  smsCredits: number;
+  eventWebsiteTier: EventWebsiteTier;
+  bundleDiscount: number;
+  rushProcessingDiscount: number;
+  freeEnvelopeAddressing: boolean;
+  freeEnvelopeAddressingLimit?: number;
+}

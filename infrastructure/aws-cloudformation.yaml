@@ -296,76 +296,78 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: !Sub 'invitegenerator-app-${Environment}'
-      Policies:
-        - PolicyName: DynamoDBAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - dynamodb:GetItem
-                  - dynamodb:PutItem
-                  - dynamodb:UpdateItem
-                  - dynamodb:DeleteItem
-                  - dynamodb:Query
-                  - dynamodb:Scan
-                  - dynamodb:BatchWriteItem
-                  - dynamodb:BatchGetItem
-                Resource:
-                  - !GetAtt UsersTable.Arn
-                  - !Sub '${UsersTable.Arn}/index/*'
-                  - !GetAtt InvitationsTable.Arn
-                  - !Sub '${InvitationsTable.Arn}/index/*'
-                  - !GetAtt RSVPsTable.Arn
-                  - !GetAtt TemplatesTable.Arn
-                  - !Sub '${TemplatesTable.Arn}/index/*'
-                  - !GetAtt BlogPostsTable.Arn
-                  - !GetAtt ConsentTable.Arn
-                  - !GetAtt EmailQueueTable.Arn
-                  - !Sub '${EmailQueueTable.Arn}/index/*'
-        - PolicyName: S3Access
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:GetObject
-                  - s3:DeleteObject
-                  - s3:ListBucket
-                Resource:
-                  - !GetAtt UploadsBucket.Arn
-                  - !Sub '${UploadsBucket.Arn}/*'
-        - PolicyName: CognitoAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cognito-idp:AdminCreateUser
-                  - cognito-idp:AdminDeleteUser
-                  - cognito-idp:AdminGetUser
-                  - cognito-idp:AdminUpdateUserAttributes
-                  - cognito-idp:AdminInitiateAuth
-                  - cognito-idp:AdminRespondToAuthChallenge
-                Resource: !GetAtt UserPool.Arn
-        - PolicyName: SESAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ses:SendEmail
-                  - ses:SendRawEmail
-                Resource: '*'
-        - PolicyName: BedrockAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - bedrock:InvokeModel
-                Resource: '*'
+
+  # Managed Policy for DynamoDB Access
+  DynamoDBPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub 'InviteGenerator-DynamoDB-${Environment}'
+      Users:
+        - !Ref AppUser
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:BatchGetItem
+            Resource:
+              - !GetAtt UsersTable.Arn
+              - !Sub '${UsersTable.Arn}/index/*'
+              - !GetAtt InvitationsTable.Arn
+              - !Sub '${InvitationsTable.Arn}/index/*'
+              - !GetAtt RSVPsTable.Arn
+              - !GetAtt TemplatesTable.Arn
+              - !Sub '${TemplatesTable.Arn}/index/*'
+              - !GetAtt BlogPostsTable.Arn
+              - !GetAtt ConsentTable.Arn
+              - !GetAtt EmailQueueTable.Arn
+              - !Sub '${EmailQueueTable.Arn}/index/*'
+
+  # Managed Policy for S3, Cognito, SES, Bedrock Access
+  AppServicesPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub 'InviteGenerator-Services-${Environment}'
+      Users:
+        - !Ref AppUser
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              - s3:ListBucket
+            Resource:
+              - !GetAtt UploadsBucket.Arn
+              - !Sub '${UploadsBucket.Arn}/*'
+          - Effect: Allow
+            Action:
+              - cognito-idp:AdminCreateUser
+              - cognito-idp:AdminDeleteUser
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminUpdateUserAttributes
+              - cognito-idp:AdminInitiateAuth
+              - cognito-idp:AdminRespondToAuthChallenge
+              - cognito-idp:AdminConfirmSignUp
+            Resource: !GetAtt UserPool.Arn
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: '*'
 
   AppUserAccessKey:
     Type: AWS::IAM::AccessKey
