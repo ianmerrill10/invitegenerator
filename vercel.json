@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/blog/scheduler", "schedule": "0 9 * * *" },
+    { "path": "/api/blog/scheduler?action=publish", "schedule": "0 15 * * *" }
+  ]
+}
