@@ -457,7 +457,7 @@ export default function LandingPage() {
                         {category.name}
                       </h3>
                       <p className="text-xs text-surface-500">
-                        {category.templateCount}+ templates
+                        View templates
                       </p>
                     </Card>
                   </Link>

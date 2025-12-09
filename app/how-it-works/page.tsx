@@ -26,7 +26,7 @@ const steps = [
     number: "01",
     title: "Choose Your Template",
     description:
-      "Browse our collection of 1,050+ professionally designed templates. Filter by event type, style, or color scheme to find the perfect match for your occasion.",
+      "Browse our collection of professionally designed templates. Filter by event type, style, or color scheme to find the perfect match for your occasion.",
     icon: Palette,
     features: [
       "Wedding, birthday, baby shower & more",

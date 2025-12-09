@@ -100,7 +100,7 @@ export default function LoginPage() {
           <div className="mt-12 space-y-4">
             {[
               "AI-powered design suggestions",
-              "100+ professional templates",
+              "Professional templates",
               "Real-time RSVP tracking",
             ].map((feature, index) => (
               <motion.div
