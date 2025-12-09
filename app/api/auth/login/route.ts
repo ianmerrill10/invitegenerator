@@ -85,8 +85,13 @@ export async function POST(request: NextRequest) {
     try {
       authResult = await cognitoClient.send(authCommand);
     } catch (authError: any) {
-      console.error("Cognito auth error:", authError);
-      
+      console.error("Cognito auth error:", {
+        name: authError.name,
+        message: authError.message,
+        code: authError.$metadata?.httpStatusCode,
+        hasClientSecret: !!clientSecret,
+      });
+
       if (authError.name === "NotAuthorizedException") {
         return errorResponse("Invalid email or password", 401);
       }
@@ -96,8 +101,9 @@ export async function POST(request: NextRequest) {
       if (authError.name === "UserNotConfirmedException") {
         return errorResponse("Please verify your email address first", 401);
       }
-      
-      return errorResponse("Authentication failed", 500);
+
+      // Include error name for debugging
+      return errorResponse(`Authentication failed (${authError.name})`, 500);
     }
 
     if (!authResult.AuthenticationResult) {
