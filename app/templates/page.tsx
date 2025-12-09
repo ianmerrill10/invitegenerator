@@ -131,7 +131,7 @@ export default function TemplatesPage() {
               className="text-center max-w-3xl mx-auto"
             >
               <Badge variant="secondary" className="mb-4">
-                1,050+ Templates
+                Templates
               </Badge>
               <h1 className="text-display-lg font-display font-bold text-surface-900 mb-6">
                 Beautiful Templates for Every Occasion
@@ -272,7 +272,7 @@ export default function TemplatesPage() {
               className="text-center mt-12"
             >
               <p className="text-surface-600 mb-4">
-                Sign up to access all 1,050+ templates and create unlimited invitations
+                Sign up to access all templates and create invitations
               </p>
               <Link href="/auth/signup">
                 <Button size="lg" rightIcon={<ArrowRight className="h-5 w-5" />}>

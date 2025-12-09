@@ -268,7 +268,7 @@ export default function TemplatesPage() {
               Unlock All Premium Templates
             </h3>
             <p className="text-white/80">
-              Get access to 100+ premium templates with a Pro subscription
+              Get access to premium templates with a Pro subscription
             </p>
           </div>
           <Link href="/dashboard/settings">

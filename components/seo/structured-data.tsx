@@ -309,7 +309,7 @@ export function SoftwareApplicationSchema() {
     screenshot: `${SITE_URL}/screenshots/app-dashboard.png`,
     featureList: [
       "AI-Powered Design",
-      "100+ Templates",
+      "Professional Templates",
       "RSVP Tracking",
       "Free to Use",
       "Social Sharing",

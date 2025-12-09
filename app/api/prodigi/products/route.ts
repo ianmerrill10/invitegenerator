@@ -6,6 +6,9 @@ import {
   type ProductCategory,
 } from "@/lib/prodigi/config";
 
+// Force dynamic rendering (uses request.url)
+export const dynamic = "force-dynamic";
+
 // GET /api/prodigi/products - Get available products
 export async function GET(request: NextRequest) {
   try {
