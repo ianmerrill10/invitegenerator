@@ -7,6 +7,9 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+// Force dynamic rendering (uses request.url)
+export const dynamic = "force-dynamic";
+
 // Static blog posts for initial launch (before AI generation is running)
 const STATIC_POSTS = [
   {
