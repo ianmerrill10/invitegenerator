@@ -150,12 +150,6 @@ const features = [
   },
 ];
 
-const stats = [
-  { value: "500K+", label: "Invitations Created" },
-  { value: "50+", label: "Beautiful Templates" },
-  { value: "10M+", label: "Guests Managed" },
-  { value: "98%", label: "Customer Satisfaction" },
-];
 
 export default function FeaturesPage() {
   return (
@@ -196,26 +190,6 @@ export default function FeaturesPage() {
           </motion.div>
         </section>
 
-        {/* Stats Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="p-6 text-center bg-white">
-                  <div className="text-3xl md:text-4xl font-bold text-brand-500 mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-surface-600">{stat.label}</div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
 
         {/* Features Grid */}
         {features.map((section, sectionIndex) => (
