@@ -61,7 +61,7 @@ const features = [
     icon: Palette,
     title: "Beautiful Templates",
     description:
-      "Choose from hundreds of professionally designed templates for any occasion.",
+      "Choose from professionally designed templates for any occasion.",
     color: "accent",
   },
   {
@@ -427,7 +427,7 @@ export default function LandingPage() {
                 <span className="text-gradient-warm">Every Occasion</span>
               </h2>
               <p className="text-lg text-surface-600">
-                Hundreds of templates designed for weddings, birthdays, corporate
+                Templates designed for weddings, birthdays, corporate
                 events, and more.
               </p>
             </motion.div>
