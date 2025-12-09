@@ -8,30 +8,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const dynamoClient = new DynamoDBClient({
   region: process.env.AWS_REGION || "us-east-1",
 });
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-
-// Helper to get user ID from token
-async function getUserFromToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("id_token")?.value;
-  if (!token) {
-    // Try user_id cookie (from social login)
-    const userId = cookieStore.get("user_id")?.value;
-    return userId || null;
-  }
-  try {
-    const decoded = jwt.decode(token) as { sub?: string };
-    return decoded?.sub || null;
-  } catch {
-    return null;
-  }
-}
 
 function errorResponse(message: string, status = 400) {
   return NextResponse.json(
@@ -44,10 +26,11 @@ function errorResponse(message: string, status = 400) {
  * GET: Fetch user profile
  */
 export async function GET() {
-  const userId = await getUserFromToken();
-  if (!userId) {
-    return errorResponse("Unauthorized", 401);
+  const authResult = await getAuthenticatedUser();
+  if (!authResult.success) {
+    return errorResponse(authResult.error.message, authResult.error.code === "TOKEN_EXPIRED" ? 401 : 401);
   }
+  const userId = authResult.user.userId;
 
   try {
     const result = await docClient.send(
@@ -85,10 +68,11 @@ export async function GET() {
  * PATCH: Update user profile
  */
 export async function PATCH(request: NextRequest) {
-  const userId = await getUserFromToken();
-  if (!userId) {
-    return errorResponse("Unauthorized", 401);
+  const authResult = await getAuthenticatedUser();
+  if (!authResult.success) {
+    return errorResponse(authResult.error.message, 401);
   }
+  const userId = authResult.user.userId;
 
   try {
     const body = await request.json();

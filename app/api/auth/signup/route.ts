@@ -10,6 +10,7 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { AUTH_CONFIG } from "@/lib/auth-config";
+import { checkRateLimit, rateLimitResponse, rateLimiters } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 function calculateSecretHash(username: string, clientId: string, clientSecret: string): string {
@@ -59,6 +60,12 @@ function validatePassword(password: string): string | null {
 }
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting for auth endpoints
+  const rateLimitResult = checkRateLimit(request, rateLimiters.auth);
+  if (!rateLimitResult.success) {
+    return rateLimitResponse(rateLimitResult, rateLimiters.auth.message);
+  }
+
   try {
     const body = await request.json();
     const { name, email, password } = body;

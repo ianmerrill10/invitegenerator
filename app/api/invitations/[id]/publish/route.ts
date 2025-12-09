@@ -6,9 +6,8 @@ import {
   UpdateCommand,
   QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
 import { randomBytes } from "crypto";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 // Initialize DynamoDB
 const dynamoClient = new DynamoDBClient({
@@ -16,26 +15,6 @@ const dynamoClient = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-
-// Helper to get user from token
-async function getUserFromToken(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-    const idToken = cookieStore.get("id_token")?.value;
-
-    if (!accessToken && !idToken) {
-      return null;
-    }
-
-    const token = idToken || accessToken;
-    const decoded = jwt.decode(token!) as { sub?: string };
-    return decoded?.sub || null;
-  } catch (error) {
-    console.error("Token decode error:", error);
-    return null;
-  }
-}
 
 // Generate URL-safe short ID
 function generateShortId(): string {
@@ -99,11 +78,11 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const userId = await getUserFromToken();
-
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     // Get invitation
     const getCommand = new GetCommand({
@@ -208,11 +187,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const userId = await getUserFromToken();
-
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     // Get invitation
     const getCommand = new GetCommand({

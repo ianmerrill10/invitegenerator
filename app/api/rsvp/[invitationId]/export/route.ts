@@ -5,8 +5,7 @@ import {
   GetCommand,
   QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 // Initialize DynamoDB
 const dynamoClient = new DynamoDBClient({
@@ -14,25 +13,6 @@ const dynamoClient = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-
-// Helper to get user from token
-async function getUserFromToken(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-    const idToken = cookieStore.get("id_token")?.value;
-
-    if (!accessToken && !idToken) {
-      return null;
-    }
-
-    const token = idToken || accessToken;
-    const decoded = jwt.decode(token!) as { sub?: string };
-    return decoded?.sub || null;
-  } catch {
-    return null;
-  }
-}
 
 function errorResponse(message: string, status: number = 400) {
   return NextResponse.json(
@@ -58,11 +38,11 @@ export async function GET(
 ) {
   try {
     const { invitationId } = await params;
-    const userId = await getUserFromToken();
-
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     const { searchParams } = new URL(request.url);
     const format = searchParams.get("format") || "csv";

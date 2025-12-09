@@ -5,8 +5,8 @@ import {
 } from "@aws-sdk/client-bedrock-runtime";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
+import { checkRateLimit, rateLimitResponse, rateLimiters } from "@/lib/rate-limit";
 
 // Initialize AWS clients
 const bedrockClient = new BedrockRuntimeClient({
@@ -18,19 +18,6 @@ const dynamoClient = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-
-// Helper to get user from token
-async function getUserFromToken(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies();
-    const idToken = cookieStore.get("id_token")?.value;
-    if (!idToken) return null;
-    const decoded = jwt.decode(idToken) as any;
-    return decoded?.sub || null;
-  } catch {
-    return null;
-  }
-}
 
 // Helper to create error response
 function errorResponse(message: string, status: number = 400) {
@@ -66,11 +53,18 @@ const fontPairs = {
 };
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting for AI generation (expensive operation)
+  const rateLimitResult = checkRateLimit(request, rateLimiters.ai);
+  if (!rateLimitResult.success) {
+    return rateLimitResponse(rateLimitResult, rateLimiters.ai.message);
+  }
+
   try {
-    const userId = await getUserFromToken();
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     // Get user to check credits
     const getUserCommand = new GetCommand({
