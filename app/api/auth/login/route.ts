@@ -8,6 +8,14 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
 import { AUTH_CONFIG } from "@/lib/auth-config";
+import crypto from "crypto";
+
+function calculateSecretHash(username: string, clientId: string, clientSecret: string): string {
+  return crypto
+    .createHmac("SHA256", clientSecret)
+    .update(username + clientId)
+    .digest("base64");
+}
 
 // Initialize AWS clients
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -50,13 +58,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Authenticate with Cognito
+    const clientId = process.env.COGNITO_CLIENT_ID || process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
+    const clientSecret = process.env.COGNITO_CLIENT_SECRET;
+    
+    if (!clientId) {
+      console.error("Missing COGNITO_CLIENT_ID environment variable");
+      return errorResponse("Server configuration error", 500);
+    }
+
+    const authParameters: Record<string, string> = {
+      USERNAME: email,
+      PASSWORD: password,
+    };
+
+    if (clientSecret) {
+      authParameters.SECRET_HASH = calculateSecretHash(email, clientId, clientSecret);
+    }
+
     const authCommand = new InitiateAuthCommand({
       AuthFlow: "USER_PASSWORD_AUTH",
-      ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
-      AuthParameters: {
-        USERNAME: email,
-        PASSWORD: password,
-      },
+      ClientId: clientId,
+      AuthParameters: authParameters,
     });
 
     let authResult;

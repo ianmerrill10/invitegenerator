@@ -9,6 +9,14 @@ import {
   CognitoIdentityProviderClient,
   ForgotPasswordCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import crypto from "crypto";
+
+function calculateSecretHash(username: string, clientId: string, clientSecret: string): string {
+  return crypto
+    .createHmac("SHA256", clientSecret)
+    .update(username + clientId)
+    .digest("base64");
+}
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION || "us-east-1",
@@ -36,9 +44,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Request password reset from Cognito
+    const clientId = process.env.COGNITO_CLIENT_ID || process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
+    const clientSecret = process.env.COGNITO_CLIENT_SECRET;
+    
+    if (!clientId) {
+      console.error("Missing COGNITO_CLIENT_ID environment variable");
+      return errorResponse("Server configuration error", 500);
+    }
+
     const command = new ForgotPasswordCommand({
-      ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
+      ClientId: clientId,
       Username: email,
+      SecretHash: clientSecret ? calculateSecretHash(email, clientId, clientSecret) : undefined,
     });
 
     try {

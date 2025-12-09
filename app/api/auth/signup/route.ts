@@ -10,6 +10,14 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { AUTH_CONFIG } from "@/lib/auth-config";
+import crypto from "crypto";
+
+function calculateSecretHash(username: string, clientId: string, clientSecret: string): string {
+  return crypto
+    .createHmac("SHA256", clientSecret)
+    .update(username + clientId)
+    .digest("base64");
+}
 
 // Initialize AWS clients
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -80,10 +88,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Sign up with Cognito
+    const clientId = process.env.COGNITO_CLIENT_ID || process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
+    const clientSecret = process.env.COGNITO_CLIENT_SECRET;
+    
+    if (!clientId) {
+      console.error("Missing COGNITO_CLIENT_ID environment variable");
+      return errorResponse("Server configuration error", 500);
+    }
+
     const signUpCommand = new SignUpCommand({
-      ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
+      ClientId: clientId,
       Username: email,
       Password: password,
+      SecretHash: clientSecret ? calculateSecretHash(email, clientId, clientSecret) : undefined,
       UserAttributes: [
         { Name: "email", Value: email },
         { Name: "name", Value: name },
@@ -114,11 +131,14 @@ export async function POST(request: NextRequest) {
     // Auto-confirm user for development (remove in production with email verification)
     if (process.env.NODE_ENV === "development") {
       try {
-        const confirmCommand = new AdminConfirmSignUpCommand({
-          UserPoolId: process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
-          Username: email,
-        });
-        await cognitoClient.send(confirmCommand);
+        const userPoolId = process.env.COGNITO_USER_POOL_ID || process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID;
+        if (userPoolId) {
+          const confirmCommand = new AdminConfirmSignUpCommand({
+            UserPoolId: userPoolId,
+            Username: email,
+          });
+          await cognitoClient.send(confirmCommand);
+        }
       } catch (confirmError) {
         console.error("Auto-confirm error:", confirmError);
         // Continue anyway - user might need to verify email
@@ -160,13 +180,17 @@ export async function POST(request: NextRequest) {
     let tokens = null;
     if (process.env.NODE_ENV === "development") {
       try {
+        const authParameters: Record<string, string> = {
+          USERNAME: email,
+          PASSWORD: password,
+        };
+        if (clientSecret) {
+          authParameters.SECRET_HASH = calculateSecretHash(email, clientId, clientSecret);
+        }
         const authCommand = new InitiateAuthCommand({
           AuthFlow: "USER_PASSWORD_AUTH",
-          ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
-          AuthParameters: {
-            USERNAME: email,
-            PASSWORD: password,
-          },
+          ClientId: clientId,
+          AuthParameters: authParameters,
         });
         const authResult = await cognitoClient.send(authCommand);
         tokens = authResult.AuthenticationResult;
