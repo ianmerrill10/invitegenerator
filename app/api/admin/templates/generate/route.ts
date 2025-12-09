@@ -223,9 +223,9 @@ export async function POST(request: NextRequest) {
       saveToDb = false,
     } = body;
 
-    // Validate admin access (in production, check auth token)
+    // Validate admin access - always require authentication
     const adminKey = request.headers.get("x-admin-key");
-    if (adminKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === "production") {
+    if (!adminKey || adminKey !== process.env.ADMIN_API_KEY) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -7,9 +7,9 @@ import {
   QueryCommand,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
+import { checkRateLimit, rateLimitResponse, rateLimiters } from "@/lib/rate-limit";
 
 // Initialize DynamoDB
 const dynamoClient = new DynamoDBClient({
@@ -28,25 +28,6 @@ interface RSVPSubmission {
   dietaryRestrictions?: string;
   message?: string;
   customAnswers?: Record<string, string | boolean>;
-}
-
-// Helper to get user from token
-async function getUserFromToken(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-    const idToken = cookieStore.get("id_token")?.value;
-
-    if (!accessToken && !idToken) {
-      return null;
-    }
-
-    const token = idToken || accessToken;
-    const decoded = jwt.decode(token!) as { sub?: string };
-    return decoded?.sub || null;
-  } catch {
-    return null;
-  }
 }
 
 // Sanitize text to prevent XSS
@@ -106,6 +87,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ invitationId: string }> }
 ) {
+  // Apply rate limiting for RSVP submissions
+  const rateLimitResult = checkRateLimit(request, rateLimiters.rsvp);
+  if (!rateLimitResult.success) {
+    return rateLimitResponse(rateLimitResult, rateLimiters.rsvp.message);
+  }
+
   try {
     const { invitationId } = await params;
 
@@ -248,11 +235,11 @@ export async function GET(
 ) {
   try {
     const { invitationId } = await params;
-    const userId = await getUserFromToken();
-
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     // Verify user owns invitation
     const getInvitation = new GetCommand({

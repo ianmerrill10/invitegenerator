@@ -5,9 +5,8 @@ import {
   QueryCommand,
   PutCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 // Initialize DynamoDB
 const dynamoClient = new DynamoDBClient({
@@ -15,27 +14,6 @@ const dynamoClient = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-
-// Helper to get user from token
-async function getUserFromToken(): Promise<string | null> {
-  try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-    const idToken = cookieStore.get("id_token")?.value;
-
-    if (!accessToken && !idToken) {
-      return null;
-    }
-
-    // Decode the token to get user ID
-    const token = idToken || accessToken;
-    const decoded = jwt.decode(token!) as any;
-    return decoded?.sub || null;
-  } catch (error) {
-    console.error("Token decode error:", error);
-    return null;
-  }
-}
 
 // Helper to create error response
 function errorResponse(message: string, status: number = 400) {
@@ -51,10 +29,11 @@ function errorResponse(message: string, status: number = 400) {
 // GET /api/invitations - List user's invitations
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getUserFromToken();
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     // Query invitations by user ID
     const queryCommand = new QueryCommand({
@@ -82,10 +61,11 @@ export async function GET(request: NextRequest) {
 // POST /api/invitations - Create new invitation
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getUserFromToken();
-    if (!userId) {
-      return errorResponse("Unauthorized", 401);
+    const authResult = await getAuthenticatedUser();
+    if (!authResult.success) {
+      return errorResponse(authResult.error.message, 401);
     }
+    const userId = authResult.user.userId;
 
     const body = await request.json();
     const {
