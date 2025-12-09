@@ -278,7 +278,7 @@ export default function CreateInvitationPage() {
                         {category.name}
                       </h3>
                       <p className="text-sm text-surface-500 mt-1">
-                        {category.templateCount}+ templates
+                        View templates
                       </p>
                     </button>
                   ))}
