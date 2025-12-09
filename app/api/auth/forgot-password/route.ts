@@ -18,8 +18,11 @@ function calculateSecretHash(username: string, clientId: string, clientSecret: s
     .digest("base64");
 }
 
+// Trim region to handle env vars with trailing newlines
+const awsRegion = (process.env.AWS_REGION || "us-east-1").trim();
+
 const cognitoClient = new CognitoIdentityProviderClient({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: awsRegion,
 });
 
 function errorResponse(message: string, status = 400) {

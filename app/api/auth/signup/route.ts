@@ -19,13 +19,15 @@ function calculateSecretHash(username: string, clientId: string, clientSecret: s
     .digest("base64");
 }
 
-// Initialize AWS clients
+// Initialize AWS clients (trim region to handle env vars with trailing newlines)
+const awsRegion = (process.env.AWS_REGION || "us-east-1").trim();
+
 const cognitoClient = new CognitoIdentityProviderClient({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: awsRegion,
 });
 
 const dynamoClient = new DynamoDBClient({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: awsRegion,
 });
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
