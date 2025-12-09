@@ -1,6 +1,6 @@
 /**
  * Lambda function to generate invitation templates using AWS Bedrock
- * Uses Stability AI Stable Image Core model (~$0.01 per image)
+ * Uses Stability AI Stable Diffusion 3.5 Large - BEST QUALITY
  */
 
 const { BedrockRuntimeClient, InvokeModelCommand } = require("@aws-sdk/client-bedrock-runtime");
@@ -9,60 +9,55 @@ const sharp = require("sharp");
 
 // Configuration
 const S3_BUCKET = process.env.S3_BUCKET || "invitegenerator-templates-983101357971";
-const AWS_REGION = process.env.AWS_REGION || "us-west-2"; // Bedrock available in us-west-2
+const BEDROCK_REGION = process.env.BEDROCK_REGION || "us-west-2"; // SD3.5 available in us-west-2
+const S3_REGION = "us-east-1";
 
 // Clients
-const bedrockClient = new BedrockRuntimeClient({ region: AWS_REGION });
-const s3Client = new S3Client({ region: "us-east-1" }); // S3 bucket region
+const bedrockClient = new BedrockRuntimeClient({ region: BEDROCK_REGION });
+const s3Client = new S3Client({ region: S3_REGION });
 
 // Prodigi print spec: 1748x1748 at 300 DPI
 const TEMPLATE_SIZE = 1748;
 const THUMBNAIL_SIZE = 400;
 
-// Style moods for prompts
+// Style descriptions for prompts
 const STYLE_MOODS = {
-  minimalist: "clean, simple, lots of white space, subtle, refined",
-  elegant: "sophisticated, graceful, luxurious, refined, high-end",
-  modern: "contemporary, fresh, sleek, trendy, geometric",
-  vintage: "retro, nostalgic, classic, antique charm, timeless",
-  rustic: "natural, earthy, farmhouse, organic, warm wood tones",
-  bohemian: "free-spirited, eclectic, artistic, natural, layered textures",
-  tropical: "vibrant, lush, exotic, paradise, palm fronds and flowers",
-  romantic: "soft, dreamy, delicate, pastel, roses and hearts",
-  playful: "fun, colorful, energetic, whimsical, party vibes",
-  luxurious: "opulent, gold accents, marble, velvet, rich textures",
-  whimsical: "magical, fairytale, dreamy, fantastical, enchanted",
-  classic: "traditional, timeless, formal, distinguished, heritage",
-  "art-deco": "geometric, gold, 1920s glamour, gatsby, bold lines",
-  watercolor: "soft washes, painted, artistic, flowing, delicate",
-  geometric: "bold shapes, angular, modern patterns, structured",
-  floral: "flowers, blooms, garden, botanical, romantic petals",
-  botanical: "green leaves, nature, organic, plants, garden fresh",
-  abstract: "artistic, creative, expressive, unique patterns",
+  minimalist: "clean, simple, lots of white space, subtle, refined, minimal decoration, zen-like simplicity",
+  elegant: "sophisticated, graceful, luxurious, refined, high-end aesthetic, opulent details",
+  modern: "contemporary, fresh, sleek, trendy, geometric shapes, sharp lines, bold contrasts",
+  vintage: "retro, nostalgic, classic, antique charm, timeless appeal, sepia tones, ornate borders",
+  rustic: "natural, earthy, farmhouse style, organic textures, warm wood tones, burlap and lace",
+  bohemian: "free-spirited, eclectic, artistic, natural materials, layered textures, dreamcatcher motifs",
+  tropical: "vibrant colors, lush greenery, exotic flowers, paradise theme, palm leaves, hibiscus",
+  romantic: "soft colors, dreamy, delicate florals, pastel tones, hearts and roses, soft focus",
+  playful: "fun, colorful, energetic, whimsical elements, party vibes, confetti, bright patterns",
+  luxurious: "opulent, gold accents, marble textures, velvet, rich materials, crystal elements",
+  whimsical: "magical, fairytale elements, dreamy, fantastical, enchanted forest, sparkling stars",
+  classic: "traditional, timeless, formal, distinguished, heritage style, symmetrical design",
 };
 
-// Event-specific elements
+// Event-specific design elements
 const EVENT_ELEMENTS = {
-  wedding: "rings, flowers, doves, hearts, elegant script",
-  birthday: "balloons, confetti, cake, candles, celebration",
-  baby_shower: "baby items, stork, soft pastels, rattles, clouds",
-  bridal_shower: "flowers, champagne, dress silhouette, hearts",
-  graduation: "cap and gown, diploma, stars, academic elements",
-  corporate: "professional, clean lines, geometric, modern",
-  holiday: "seasonal decorations, festive elements, traditional motifs",
-  dinner_party: "elegant table setting, wine glasses, candles",
-  anniversary: "intertwined hearts, roses, gold accents, rings",
-  engagement: "diamond ring, champagne, hearts, romantic florals",
-  housewarming: "house silhouette, keys, plants, home elements",
-  retirement: "celebration, gold watch, flowers, achievement",
-  reunion: "group silhouette, memories, nostalgic elements",
-  religious: "appropriate religious symbols, elegant, reverent",
-  kids_party: "fun characters, bright colors, toys, games",
-  sports: "sports equipment, action lines, team colors",
-  seasonal: "nature elements matching the season",
+  wedding: "wedding rings, elegant flowers like roses and peonies, doves, hearts, flowing silk ribbons, wedding bells",
+  birthday: "balloons, confetti, birthday cake with candles, streamers, gift boxes, celebration elements",
+  baby_shower: "baby items, stork, soft pastels, rattles, fluffy clouds, cute baby animals, footprints",
+  bridal_shower: "flowers, champagne glasses, wedding dress silhouette, hearts, diamond ring, pearls",
+  graduation: "graduation cap, diploma scroll, stars, academic laurel wreath, books, achievement medals",
+  corporate: "professional geometric patterns, clean lines, modern shapes, abstract art, business elements",
+  holiday: "seasonal decorations, festive ornaments, traditional motifs, holly, snowflakes, lights",
+  dinner_party: "elegant table setting elements, wine glasses, candles, silverware, fine china",
+  anniversary: "intertwined hearts, red roses, gold accents, champagne, celebration symbols, love birds",
+  engagement: "diamond ring, champagne, hearts, romantic florals, sparkles, love knots",
+  housewarming: "house silhouette, golden keys, potted plants, home decor elements, welcome wreaths",
+  retirement: "celebration elements, gold watch, flowers, achievement symbols, sunset imagery",
+  reunion: "connected silhouettes, memory-themed elements, nostalgic items, family tree",
+  religious: "elegant religious symbols, reverent decorative elements, stained glass patterns, doves",
+  kids_party: "fun cartoon elements, bright rainbow colors, toys, party games, cartoon characters",
+  sports: "sports equipment outlines, action lines, dynamic shapes, victory elements, medals",
+  seasonal: "nature elements matching the season, seasonal flowers and colors, weather elements",
 };
 
-// Color palettes
+// Color palettes optimized for invitations
 const COLOR_PALETTES = [
   { name: "Blush Rose", colors: ["#D4919F", "#F5E1E5", "#FFFFFF"] },
   { name: "Sage Garden", colors: ["#87A878", "#E8F0E5", "#FFFFFF"] },
@@ -73,60 +68,51 @@ const COLOR_PALETTES = [
   { name: "Terracotta", colors: ["#C4785A", "#F5EBE6", "#FFFFFF"] },
   { name: "Forest Green", colors: ["#2D5A4A", "#E5F0EB", "#FFFFFF"] },
   { name: "Dusty Mauve", colors: ["#B08D9B", "#F5EEF0", "#FFFFFF"] },
-  { name: "Champagne", colors: ["#C9B896", "#F8F5F0", "#FFFFFF"] },
+  { name: "Champagne Gold", colors: ["#C9B896", "#F8F5F0", "#FFFFFF"] },
+  { name: "Royal Purple", colors: ["#6B4C7A", "#E8E0ED", "#FFFFFF"] },
+  { name: "Coral Sunset", colors: ["#E07B6C", "#FCE8E5", "#FFFFFF"] },
 ];
 
 /**
- * Create prompt for invitation design
+ * Create optimized prompt for Stable Diffusion 3.5 Large
  */
 function createPrompt(category, subcategory, style, colors) {
-  const elements = EVENT_ELEMENTS[category] || "elegant decorations";
-  const mood = STYLE_MOODS[style] || "elegant";
+  const elements = EVENT_ELEMENTS[category] || "elegant decorative elements";
+  const mood = STYLE_MOODS[style] || "elegant and refined";
   const [primary, secondary] = colors;
 
-  return `Create a beautiful, professional invitation design template for a ${subcategory.replace(/-/g, " ")} ${category.replace(/_/g, " ")} event.
+  return `A stunning, ultra high quality professional invitation template design for a ${subcategory.replace(/-/g, " ")} ${category.replace(/_/g, " ")} event.
 
-Style: ${style} (${mood})
-Color scheme: Primary ${primary}, Secondary ${secondary}
+Art style: ${mood}
 Design elements: ${elements}
+Color scheme: Primary ${primary}, secondary ${secondary}, white and cream accents
 
-Requirements:
-- Square format, 1:1 aspect ratio
-- Clear central area for text overlay (leave middle empty for event details)
-- Decorative elements around edges and corners only
-- Professional print quality design
-- NO text, letters, numbers, or words in the image
-- Elegant borders or decorative frames
-- High resolution quality
-- The overall feeling should be ${mood}
+The design features:
+- Ornate decorative borders and corner flourishes
+- Clear empty center space for text overlay
+- Intricate details around the edges
+- Professional print-ready quality
+- Elegant symmetrical composition
+- Rich textures and depth
+- No text, words, or letters anywhere in the design
 
-This is a template background - text will be added separately.`;
+Masterpiece quality, award-winning invitation design, 8K resolution, photorealistic details, professional graphic design.`;
 }
 
 /**
- * Generate image using Bedrock Stable Diffusion
+ * Generate image using Stable Diffusion 3.5 Large via Bedrock
  */
-async function generateWithBedrock(prompt) {
-  // Use Stability AI SDXL model (available in Bedrock)
-  const modelId = "stability.stable-diffusion-xl-v1";
+async function generateWithSD35(prompt) {
+  // Stable Diffusion 3.5 Large model ID
+  const modelId = "stability.sd3-5-large-v1:0";
 
   const input = {
-    text_prompts: [
-      {
-        text: prompt,
-        weight: 1.0,
-      },
-      {
-        text: "text, words, letters, numbers, watermark, signature, blurry, low quality",
-        weight: -1.0,
-      },
-    ],
-    cfg_scale: 7,
-    steps: 50,
+    prompt: prompt,
+    negative_prompt: "text, words, letters, numbers, watermark, signature, blurry, low quality, distorted, ugly, bad composition, amateur, poorly designed, cheap looking, clipart, stock photo watermark",
+    mode: "text-to-image",
+    aspect_ratio: "1:1",
+    output_format: "png",
     seed: Math.floor(Math.random() * 4294967295),
-    width: 1024,
-    height: 1024,
-    samples: 1,
   };
 
   const command = new InvokeModelCommand({
@@ -139,12 +125,11 @@ async function generateWithBedrock(prompt) {
   const response = await bedrockClient.send(command);
   const responseBody = JSON.parse(new TextDecoder().decode(response.body));
 
-  if (!responseBody.artifacts || responseBody.artifacts.length === 0) {
-    throw new Error("No image generated from Bedrock");
+  if (!responseBody.images || responseBody.images.length === 0) {
+    throw new Error("No image generated from SD3.5");
   }
 
-  // Return base64 image data
-  return Buffer.from(responseBody.artifacts[0].base64, "base64");
+  return Buffer.from(responseBody.images[0], "base64");
 }
 
 /**
@@ -158,7 +143,7 @@ async function processImage(imageBuffer) {
       .toBuffer(),
     sharp(imageBuffer)
       .resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE, { fit: "cover" })
-      .png({ quality: 80 })
+      .png({ quality: 85 })
       .toBuffer(),
   ]);
 
@@ -184,26 +169,30 @@ async function uploadToS3(buffer, key) {
 /**
  * Generate a single template
  */
-async function generateTemplate(category, subcategory, style, colorPalette) {
+async function generateTemplate(category, subcategory, style) {
   const timestamp = Date.now().toString(36);
-  const templateId = `tmpl_${category}_${subcategory}_${style}_${timestamp}`
+  const randomId = Math.random().toString(36).substring(2, 6);
+  const templateId = `tmpl_${category}_${subcategory}_${style}_${randomId}_${timestamp}`
     .toLowerCase()
     .replace(/[^a-z0-9_]/g, "_");
+
+  // Select random color palette
+  const colorPalette = COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)];
 
   // Create prompt
   const prompt = createPrompt(category, subcategory, style, colorPalette.colors);
 
-  // Generate with Bedrock
-  const imageBuffer = await generateWithBedrock(prompt);
+  // Generate with SD 3.5 Large
+  const imageBuffer = await generateWithSD35(prompt);
 
-  // Process image
+  // Process image (resize + thumbnail)
   const { fullSize, thumbnail } = await processImage(imageBuffer);
 
   // Upload to S3
   const fullKey = `templates/${category}/${subcategory}/${templateId}_full.png`;
   const thumbKey = `templates/${category}/${subcategory}/${templateId}_thumb.png`;
 
-  const [fullUrl, thumbUrl] = await Promise.all([
+  await Promise.all([
     uploadToS3(fullSize, fullKey),
     uploadToS3(thumbnail, thumbKey),
   ]);
@@ -214,13 +203,12 @@ async function generateTemplate(category, subcategory, style, colorPalette) {
     subcategory,
     style,
     colors: colorPalette.colors,
-    fullSizeUrl: fullUrl,
-    thumbnailUrl: thumbUrl,
+    colorName: colorPalette.name,
   };
 }
 
 /**
- * Lambda handler
+ * Lambda handler - processes batch of templates
  */
 exports.handler = async (event) => {
   console.log("Event:", JSON.stringify(event));
@@ -228,7 +216,7 @@ exports.handler = async (event) => {
   try {
     const { templates } = event;
 
-    if (!templates || !Array.isArray(templates)) {
+    if (!templates || !Array.isArray(templates) || templates.length === 0) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "templates array required" }),
@@ -238,23 +226,17 @@ exports.handler = async (event) => {
     const results = [];
     const errors = [];
 
-    for (const t of templates) {
+    for (let i = 0; i < templates.length; i++) {
+      const t = templates[i];
       try {
-        console.log(`Generating: ${t.category}/${t.subcategory}/${t.style}`);
+        console.log(`[${i + 1}/${templates.length}] Generating: ${t.category}/${t.subcategory}/${t.style}`);
 
-        const colorPalette = COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)];
-
-        const result = await generateTemplate(
-          t.category,
-          t.subcategory,
-          t.style,
-          colorPalette
-        );
+        const result = await generateTemplate(t.category, t.subcategory, t.style);
 
         results.push(result);
-        console.log(`Success: ${result.templateId}`);
+        console.log(`[${i + 1}/${templates.length}] Success: ${result.templateId}`);
       } catch (err) {
-        console.error(`Failed: ${t.category}/${t.subcategory}/${t.style}`, err.message);
+        console.error(`[${i + 1}/${templates.length}] Failed: ${t.category}/${t.subcategory}/${t.style}`, err.message);
         errors.push({
           template: t,
           error: err.message,
@@ -267,6 +249,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         success: results.length,
         failed: errors.length,
+        total: templates.length,
         results,
         errors,
       }),
