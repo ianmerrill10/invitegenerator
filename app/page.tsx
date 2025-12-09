@@ -250,7 +250,7 @@ export default function LandingPage() {
                         AI Generated
                       </Badge>
                       <span className="text-xs text-surface-400">
-                        Created in 30 seconds
+                        Sample preview
                       </span>
                     </div>
 
@@ -291,26 +291,6 @@ export default function LandingPage() {
                 </div>
 
                 {/* Floating badges */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 }}
-                  className="absolute -left-4 top-1/4 hidden lg:block"
-                >
-                  <Card variant="elevated" padding="sm" className="shadow-lg">
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-lg bg-success-100 flex items-center justify-center">
-                        <CheckCircle2 className="h-4 w-4 text-success-600" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-surface-900">
-                          42 RSVPs
-                        </p>
-                        <p className="text-xs text-surface-500">Today</p>
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
