@@ -567,3 +567,164 @@ Please review HANDOFF.md and ARCHITECTURE.md, then continue with:
 
 *Document Updated: December 7, 2025*
 *Status: 100% Complete - All Features Implemented*
+
+---
+
+# 🖼️ AI TEMPLATE GENERATION - SESSION UPDATE (December 10, 2025)
+
+## Current Session Work
+
+This section documents the AI template generation infrastructure added in the December 10, 2025 session.
+
+---
+
+## What Was Built
+
+### AWS Lambda + Bedrock Infrastructure
+
+**Lambda Function:** `template-gen-sd35`
+- Region: `us-west-2`
+- Runtime: Node.js 18
+- Uses Stability AI SD 3.5 Large model via Bedrock
+- Generates 1024x1024 images, resizes to 1748x1748 (Prodigi print spec)
+- Creates full-size + thumbnail for each template
+- Code: `/lambda-bedrock/index.js`
+
+**IAM Role:** `LambdaBedrockSD35Role`
+- Permissions: Bedrock InvokeModel, S3 PutObject, CloudWatch Logs
+
+**S3 Bucket:** `invitegenerator-templates-983101357971`
+- Region: us-east-1
+- Public access enabled for template images
+- Structure: `templates/{category}/{subcategory}/{templateId}_full.png` and `_thumb.png`
+
+### Template Count
+- **Current: 596 files = 298 templates**
+- **Target: 1001 templates**
+- **Remaining: 703 templates**
+
+### Cost Tracking
+- SD 3.5 Large: ~$0.08 per image
+- Spent so far: ~$24
+- Cost to reach 1001: ~$56 more (if using Bedrock)
+
+---
+
+## How to Generate More Templates
+
+### Single Template:
+```bash
+aws lambda invoke --function-name template-gen-sd35 --invocation-type Event --cli-binary-format raw-in-base64-out --region us-west-2 --payload '{"templates":[{"category":"wedding","subcategory":"classic","style":"elegant"}]}' /dev/null
+```
+
+### Batch (10-20 templates):
+```bash
+aws lambda invoke --function-name template-gen-sd35 --invocation-type Event --cli-binary-format raw-in-base64-out --region us-west-2 --payload '{"templates":[
+{"category":"wedding","subcategory":"classic","style":"elegant"},
+{"category":"birthday","subcategory":"adult","style":"modern"},
+{"category":"baby_shower","subcategory":"boy","style":"whimsical"}
+]}' /dev/null
+```
+
+### Check Template Count:
+```bash
+aws s3 ls s3://invitegenerator-templates-983101357971/templates/ --recursive | wc -l
+```
+
+### View Recent Templates:
+```bash
+aws s3 ls s3://invitegenerator-templates-983101357971/templates/ --recursive | grep "_full.png" | tail -10 | awk '{print "https://invitegenerator-templates-983101357971.s3.amazonaws.com/"$4}'
+```
+
+---
+
+## Template Categories & Styles
+
+**Categories:**
+wedding, birthday, baby_shower, bridal_shower, graduation, corporate, holiday, dinner_party, anniversary, engagement, housewarming, retirement, reunion, religious, kids_party, sports, seasonal
+
+**Styles:**
+minimalist, elegant, modern, vintage, rustic, bohemian, tropical, romantic, playful, luxurious, whimsical, classic
+
+---
+
+## Gemini Alternative (FREE)
+
+User tested Google Gemini Nano Banana Pro - produces excellent quality (2048x2048) for FREE.
+
+**Sample saved:** `Gemini template 1.jpg` in repo root
+
+**Working Gemini Prompt:**
+```
+Create a single [CATEGORY] invitation template frame. PNG format, 4K resolution (4096x4096), square 1:1, 300 DPI print-ready.
+
+[STYLE DESCRIPTION] border with [BORDER DETAILS]. Corners feature [DECORATIVE ELEMENTS] in [COLOR PALETTE] tones. [LIGHTING DESCRIPTION].
+
+Center must be COMPLETELY EMPTY - solid [BACKGROUND COLOR] background only. All decorations on edges and corners only. No text, letters, or watermarks anywhere.
+```
+
+User was building a Gemini AI Studio app to batch generate templates for free.
+
+---
+
+## APIs Created for Templates
+
+- `app/api/templates/s3/route.ts` - Lists templates from S3 bucket
+- `app/templates/page.tsx` - Templates gallery page (updated)
+
+---
+
+## What Needs To Be Done Next
+
+### Immediate Priority:
+1. **Deploy and test the site** - Verify it builds and runs
+2. **Test template display** - Ensure S3 templates load correctly
+3. **Test full invitation flow** - Template selection → customization → preview → order
+
+### Template Generation (Later):
+- Generate remaining 703 templates to reach 1001
+- Option A: Bedrock (~$56)
+- Option B: Gemini (FREE)
+- Option C: Mix of both
+
+### Prodigi Integration:
+- Verify print order flow works
+- Test with real templates (1748x1748 at 300 DPI)
+
+---
+
+## Key Files for Template System
+
+| File | Purpose |
+|------|---------|
+| `/lambda-bedrock/index.js` | Lambda function code |
+| `/lambda-bedrock/package.json` | Lambda dependencies |
+| `/app/api/templates/s3/route.ts` | S3 templates API |
+| `/app/templates/page.tsx` | Templates gallery |
+| `/Gemini template 1.jpg` | Sample Gemini template |
+
+---
+
+## AWS Resources
+
+| Resource | Name/ID | Region |
+|----------|---------|--------|
+| S3 Bucket | `invitegenerator-templates-983101357971` | us-east-1 |
+| Lambda | `template-gen-sd35` | us-west-2 |
+| IAM Role | `LambdaBedrockSD35Role` | global |
+
+---
+
+## Session Notes
+
+- EC2 GPU quota was pending - not needed since Lambda + Bedrock works
+- Titan Image Generator tested but quality rejected by user
+- Lambda timeout solved with `--invocation-type Event` (async)
+- Payload format MUST be `{"templates":[{...}]}` array
+- User accesses AWS via CloudShell on Android phone
+- User prefers copy/paste commands
+
+---
+
+*Template Generation Session Updated: December 10, 2025*
+*Templates: 298 of 1001 target*
