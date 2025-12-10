@@ -341,8 +341,8 @@ Resources:
           # Update system
           dnf update -y
 
-          # Install Node.js 20 and unzip
-          dnf install -y nodejs npm unzip
+          # Install Node.js 20 and git
+          dnf install -y nodejs npm git
           npm install -g n
           n 20
           hash -r
@@ -354,10 +354,9 @@ Resources:
           mkdir -p /opt/invitegenerator
           cd /opt/invitegenerator
 
-          # Download code from S3 (uploaded by deploy script)
-          aws s3 cp s3://${ExistingS3Bucket}/deploy/app.zip /tmp/app.zip
-          unzip /tmp/app.zip -d /opt/invitegenerator
-          rm /tmp/app.zip
+          # Clone the repository
+          git clone https://github.com/ianmerrill10/invitegenerator.git .
+          git checkout claude/project-review-01KQ6jqwFAFrf5fJZ89BJ6iT
 
           # Get Cognito Client Secret (need to fetch via CLI since it's not in outputs)
           COGNITO_CLIENT_SECRET=$(aws cognito-idp describe-user-pool-client \
