@@ -283,6 +283,7 @@ Resources:
                   - cognito-idp:AdminRespondToAuthChallenge
                   - cognito-idp:AdminConfirmSignUp
                   - cognito-idp:ListUsers
+                  - cognito-idp:DescribeUserPoolClient
                 Resource: !GetAtt UserPool.Arn
               - Effect: Allow
                 Action:
