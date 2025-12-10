@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'InviteGenerator - Complete AWS Infrastructure with EC2'
+Description: 'InviteGenerator - EC2 Infrastructure (uses existing DynamoDB/S3 from InviteGenerator-Production stack)'
 
 Parameters:
   Environment:
@@ -48,6 +48,32 @@ Parameters:
     NoEcho: true
     Default: ''
     Description: 'OpenAI API Key for DALL-E templates'
+
+  # Existing resource names from InviteGenerator-Production stack
+  ExistingUsersTable:
+    Type: String
+    Default: 'InviteGenerator-Users-production'
+    Description: 'Existing DynamoDB Users table name'
+
+  ExistingInvitationsTable:
+    Type: String
+    Default: 'InviteGenerator-Invitations-production'
+    Description: 'Existing DynamoDB Invitations table name'
+
+  ExistingRSVPsTable:
+    Type: String
+    Default: 'InviteGenerator-RSVPs-production'
+    Description: 'Existing DynamoDB RSVPs table name'
+
+  ExistingTemplatesTable:
+    Type: String
+    Default: 'InviteGenerator-Templates-production'
+    Description: 'Existing DynamoDB Templates table name'
+
+  ExistingS3Bucket:
+    Type: String
+    Default: 'invitegenerator-uploads-983101357971-production'
+    Description: 'Existing S3 bucket name'
 
 Resources:
   # ===========================================
@@ -145,139 +171,9 @@ Resources:
           Value: !Sub 'InviteGenerator-SG-${Environment}'
 
   # ===========================================
-  # DYNAMODB TABLES
+  # NOTE: DynamoDB tables and S3 bucket already exist in InviteGenerator-Production stack
+  # This template uses those existing resources via parameters
   # ===========================================
-
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub 'InviteGenerator-Users-${Environment}'
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: email
-          AttributeType: S
-        - AttributeName: stripeCustomerId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: email-index
-          KeySchema:
-            - AttributeName: email
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: stripeCustomerId-index
-          KeySchema:
-            - AttributeName: stripeCustomerId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
-  InvitationsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub 'InviteGenerator-Invitations-${Environment}'
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: userId
-          AttributeType: S
-        - AttributeName: shortId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: userId-index
-          KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: shortId-index
-          KeySchema:
-            - AttributeName: shortId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
-  RSVPsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub 'InviteGenerator-RSVPs-${Environment}'
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: invitationId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: invitationId-index
-          KeySchema:
-            - AttributeName: invitationId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
-  TemplatesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub 'InviteGenerator-Templates-${Environment}'
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: category
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: category-index
-          KeySchema:
-            - AttributeName: category
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
-  # ===========================================
-  # S3 BUCKET
-  # ===========================================
-
-  UploadsBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub 'invitegenerator-uploads-${AWS::AccountId}-${Environment}'
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-      CorsConfiguration:
-        CorsRules:
-          - AllowedHeaders: ['*']
-            AllowedMethods: [GET, PUT, POST, DELETE]
-            AllowedOrigins: ['*']
-            MaxAge: 3600
-
-  UploadsBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref UploadsBucket
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal: '*'
-            Action: 's3:GetObject'
-            Resource: !Sub '${UploadsBucket.Arn}/public/*'
 
   # ===========================================
   # COGNITO USER POOL
@@ -360,14 +256,14 @@ Resources:
                   - dynamodb:BatchWriteItem
                   - dynamodb:BatchGetItem
                 Resource:
-                  - !GetAtt UsersTable.Arn
-                  - !Sub '${UsersTable.Arn}/index/*'
-                  - !GetAtt InvitationsTable.Arn
-                  - !Sub '${InvitationsTable.Arn}/index/*'
-                  - !GetAtt RSVPsTable.Arn
-                  - !Sub '${RSVPsTable.Arn}/index/*'
-                  - !GetAtt TemplatesTable.Arn
-                  - !Sub '${TemplatesTable.Arn}/index/*'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingUsersTable}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingUsersTable}/index/*'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingInvitationsTable}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingInvitationsTable}/index/*'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingRSVPsTable}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingRSVPsTable}/index/*'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingTemplatesTable}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ExistingTemplatesTable}/index/*'
               - Effect: Allow
                 Action:
                   - s3:PutObject
@@ -375,8 +271,8 @@ Resources:
                   - s3:DeleteObject
                   - s3:ListBucket
                 Resource:
-                  - !GetAtt UploadsBucket.Arn
-                  - !Sub '${UploadsBucket.Arn}/*'
+                  - !Sub 'arn:aws:s3:::${ExistingS3Bucket}'
+                  - !Sub 'arn:aws:s3:::${ExistingS3Bucket}/*'
               - Effect: Allow
                 Action:
                   - cognito-idp:AdminCreateUser
@@ -412,11 +308,6 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     DependsOn:
-      - UsersTable
-      - InvitationsTable
-      - RSVPsTable
-      - TemplatesTable
-      - UploadsBucket
       - UserPool
       - UserPoolClient
     Properties:
@@ -483,11 +374,11 @@ Resources:
           # AWS Configuration
           AWS_REGION=${AWS::Region}
 
-          # DynamoDB Tables
-          DYNAMODB_USERS_TABLE=${UsersTable}
-          DYNAMODB_INVITATIONS_TABLE=${InvitationsTable}
-          DYNAMODB_RSVP_TABLE=${RSVPsTable}
-          DYNAMODB_TEMPLATES_TABLE=${TemplatesTable}
+          # DynamoDB Tables (using existing tables from InviteGenerator-Production)
+          DYNAMODB_USERS_TABLE=${ExistingUsersTable}
+          DYNAMODB_INVITATIONS_TABLE=${ExistingInvitationsTable}
+          DYNAMODB_RSVP_TABLE=${ExistingRSVPsTable}
+          DYNAMODB_TEMPLATES_TABLE=${ExistingTemplatesTable}
 
           # Cognito
           COGNITO_USER_POOL_ID=${UserPool}
@@ -495,8 +386,8 @@ Resources:
           NEXT_PUBLIC_COGNITO_USER_POOL_ID=${UserPool}
           NEXT_PUBLIC_COGNITO_CLIENT_ID=${UserPoolClient}
 
-          # S3
-          S3_BUCKET_NAME=${UploadsBucket}
+          # S3 (using existing bucket from InviteGenerator-Production)
+          S3_BUCKET_NAME=${ExistingS3Bucket}
 
           # Allowed Email (Beta Mode)
           ALLOWED_EMAILS=${AllowedEmail}
@@ -566,19 +457,23 @@ Outputs:
       Name: !Sub '${AWS::StackName}-UserPoolClientId'
 
   S3BucketName:
-    Description: S3 Bucket for uploads
-    Value: !Ref UploadsBucket
+    Description: S3 Bucket for uploads (existing)
+    Value: !Ref ExistingS3Bucket
     Export:
       Name: !Sub '${AWS::StackName}-S3Bucket'
 
   UsersTableName:
-    Value: !Ref UsersTable
+    Description: DynamoDB Users table (existing)
+    Value: !Ref ExistingUsersTable
   InvitationsTableName:
-    Value: !Ref InvitationsTable
+    Description: DynamoDB Invitations table (existing)
+    Value: !Ref ExistingInvitationsTable
   RSVPsTableName:
-    Value: !Ref RSVPsTable
+    Description: DynamoDB RSVPs table (existing)
+    Value: !Ref ExistingRSVPsTable
   TemplatesTableName:
-    Value: !Ref TemplatesTable
+    Description: DynamoDB Templates table (existing)
+    Value: !Ref ExistingTemplatesTable
 
   SSHCommand:
     Description: SSH command to connect to EC2
