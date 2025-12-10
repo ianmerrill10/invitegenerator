@@ -1,0 +1,31 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        # Write server-side environment variables to .env.production for SSR
+        - echo "COGNITO_CLIENT_ID=$COGNITO_CLIENT_ID" >> .env.production
+        - echo "COGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET" >> .env.production
+        - echo "COGNITO_USER_POOL_ID=$COGNITO_USER_POOL_ID" >> .env.production
+        - echo "DYNAMODB_USERS_TABLE=$DYNAMODB_USERS_TABLE" >> .env.production
+        - echo "DYNAMODB_INVITATIONS_TABLE=$DYNAMODB_INVITATIONS_TABLE" >> .env.production
+        - echo "DYNAMODB_RSVP_TABLE=$DYNAMODB_RSVP_TABLE" >> .env.production
+        - echo "DYNAMODB_TEMPLATES_TABLE=$DYNAMODB_TEMPLATES_TABLE" >> .env.production
+        - echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> .env.production
+        - echo "ALLOWED_EMAILS=$ALLOWED_EMAILS" >> .env.production
+        - echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env.production
+        # Write NEXT_PUBLIC_ variables
+        - env | grep -e NEXT_PUBLIC_ >> .env.production || true
+        # Build the app
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
