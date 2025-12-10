@@ -32,6 +32,10 @@ Resources:
           AttributeType: S
         - AttributeName: GSI1SK
           AttributeType: S
+        - AttributeName: stripeCustomerId
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
       KeySchema:
         - AttributeName: PK
           KeyType: HASH
@@ -44,6 +48,18 @@ Resources:
               KeyType: HASH
             - AttributeName: GSI1SK
               KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: stripeCustomerId-index
+          KeySchema:
+            - AttributeName: stripeCustomerId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
           Projection:
             ProjectionType: ALL
 
