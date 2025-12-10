@@ -9,6 +9,7 @@ import {
   CognitoIdentityProviderClient,
   ForgotPasswordCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { checkRateLimit, rateLimitResponse, rateLimiters } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 function calculateSecretHash(username: string, clientId: string, clientSecret: string): string {
@@ -30,6 +31,12 @@ function errorResponse(message: string, status = 400) {
 }
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting for password reset (prevent abuse)
+  const rateLimitResult = checkRateLimit(request, rateLimiters.auth);
+  if (!rateLimitResult.success) {
+    return rateLimitResponse(rateLimitResult, rateLimiters.auth.message);
+  }
+
   try {
     const { email } = await request.json();
 

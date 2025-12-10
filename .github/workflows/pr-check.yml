@@ -1,0 +1,71 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ==========================================
+  # Quick checks for PRs
+  # ==========================================
+  pr-check:
+    name: PR Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build check
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: https://invitegenerator.com
+          NEXT_PUBLIC_COGNITO_CLIENT_ID: dummy
+          NEXT_PUBLIC_COGNITO_USER_POOL_ID: dummy
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: dummy
+
+  # ==========================================
+  # PR Size Check
+  # ==========================================
+  pr-size:
+    name: PR Size Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        run: |
+          ADDITIONS=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= insertion)' || echo "0")
+          DELETIONS=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= deletion)' || echo "0")
+          TOTAL=$((ADDITIONS + DELETIONS))
+
+          echo "PR Size: +$ADDITIONS -$DELETIONS (Total: $TOTAL lines)"
+
+          if [ "$TOTAL" -gt 1000 ]; then
+            echo "::warning::Large PR detected ($TOTAL lines). Consider breaking into smaller PRs."
+          fi

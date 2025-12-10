@@ -1,0 +1,589 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'InviteGenerator - Complete AWS Infrastructure with EC2'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+
+  AppDomain:
+    Type: String
+    Default: ''
+    Description: 'Your domain name (leave empty to use EC2 public IP)'
+
+  InstanceType:
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+    Description: 'EC2 instance type'
+
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: 'Name of existing EC2 KeyPair for SSH access'
+
+  AllowedEmail:
+    Type: String
+    Default: 'ianmerrill10@gmail.com'
+    Description: 'Email allowed to login (for beta testing)'
+
+  StripeSecretKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: 'Stripe Secret Key (sk_test_... or sk_live_...)'
+
+  StripePublishableKey:
+    Type: String
+    Default: ''
+    Description: 'Stripe Publishable Key (pk_test_... or pk_live_...)'
+
+  OpenAIKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: 'OpenAI API Key for DALL-E templates'
+
+Resources:
+  # ===========================================
+  # VPC AND NETWORKING
+  # ===========================================
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-VPC-${Environment}'
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-PublicSubnet-${Environment}'
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-IGW-${Environment}'
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-RT-${Environment}'
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref RouteTable
+
+  # ===========================================
+  # SECURITY GROUP
+  # ===========================================
+
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for InviteGenerator EC2
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+          Description: Next.js Dev
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-SG-${Environment}'
+
+  # ===========================================
+  # DYNAMODB TABLES
+  # ===========================================
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'InviteGenerator-Users-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: stripeCustomerId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: stripeCustomerId-index
+          KeySchema:
+            - AttributeName: stripeCustomerId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  InvitationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'InviteGenerator-Invitations-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: shortId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: shortId-index
+          KeySchema:
+            - AttributeName: shortId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  RSVPsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'InviteGenerator-RSVPs-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: invitationId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: invitationId-index
+          KeySchema:
+            - AttributeName: invitationId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  TemplatesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'InviteGenerator-Templates-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: category
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: category-index
+          KeySchema:
+            - AttributeName: category
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # ===========================================
+  # S3 BUCKET
+  # ===========================================
+
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'invitegenerator-uploads-${AWS::AccountId}-${Environment}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST, DELETE]
+            AllowedOrigins: ['*']
+            MaxAge: 3600
+
+  UploadsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref UploadsBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${UploadsBucket.Arn}/public/*'
+
+  # ===========================================
+  # COGNITO USER POOL
+  # ===========================================
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub 'InviteGenerator-Users-${Environment}'
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub 'InviteGenerator-WebApp-${Environment}'
+      UserPoolId: !Ref UserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+
+  # ===========================================
+  # IAM ROLE FOR EC2
+  # ===========================================
+
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'InviteGenerator-EC2Role-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: InviteGeneratorAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:BatchGetItem
+                Resource:
+                  - !GetAtt UsersTable.Arn
+                  - !Sub '${UsersTable.Arn}/index/*'
+                  - !GetAtt InvitationsTable.Arn
+                  - !Sub '${InvitationsTable.Arn}/index/*'
+                  - !GetAtt RSVPsTable.Arn
+                  - !Sub '${RSVPsTable.Arn}/index/*'
+                  - !GetAtt TemplatesTable.Arn
+                  - !Sub '${TemplatesTable.Arn}/index/*'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt UploadsBucket.Arn
+                  - !Sub '${UploadsBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - cognito-idp:AdminCreateUser
+                  - cognito-idp:AdminDeleteUser
+                  - cognito-idp:AdminGetUser
+                  - cognito-idp:AdminUpdateUserAttributes
+                  - cognito-idp:AdminInitiateAuth
+                  - cognito-idp:AdminRespondToAuthChallenge
+                  - cognito-idp:AdminConfirmSignUp
+                  - cognito-idp:ListUsers
+                Resource: !GetAtt UserPool.Arn
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                Resource: '*'
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub 'InviteGenerator-EC2Profile-${Environment}'
+      Roles:
+        - !Ref EC2Role
+
+  # ===========================================
+  # EC2 INSTANCE
+  # ===========================================
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - UsersTable
+      - InvitationsTable
+      - RSVPsTable
+      - TemplatesTable
+      - UploadsBucket
+      - UserPool
+      - UserPoolClient
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Sub '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - !Ref EC2SecurityGroup
+          SubnetId: !Ref PublicSubnet
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+      Tags:
+        - Key: Name
+          Value: !Sub 'InviteGenerator-${Environment}'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -e
+
+          # Log everything
+          exec > >(tee /var/log/user-data.log) 2>&1
+          echo "Starting InviteGenerator setup..."
+
+          # Update system
+          dnf update -y
+
+          # Install Node.js 20
+          dnf install -y nodejs npm git
+          npm install -g n
+          n 20
+          hash -r
+
+          # Install PM2 for process management
+          npm install -g pm2
+
+          # Create app directory
+          mkdir -p /opt/invitegenerator
+          cd /opt/invitegenerator
+
+          # Clone the repository
+          git clone https://github.com/ianmerrill10/invitegenerator.git .
+
+          # Get Cognito Client Secret (need to fetch via CLI since it's not in outputs)
+          COGNITO_CLIENT_SECRET=$(aws cognito-idp describe-user-pool-client \
+            --user-pool-id ${UserPool} \
+            --client-id ${UserPoolClient} \
+            --region ${AWS::Region} \
+            --query 'UserPoolClient.ClientSecret' \
+            --output text)
+
+          # Create environment file
+          cat > .env.local << 'ENVEOF'
+          # App Configuration
+          NEXT_PUBLIC_APP_URL=http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):3000
+          NODE_ENV=production
+
+          # AWS Configuration
+          AWS_REGION=${AWS::Region}
+
+          # DynamoDB Tables
+          DYNAMODB_USERS_TABLE=${UsersTable}
+          DYNAMODB_INVITATIONS_TABLE=${InvitationsTable}
+          DYNAMODB_RSVP_TABLE=${RSVPsTable}
+          DYNAMODB_TEMPLATES_TABLE=${TemplatesTable}
+
+          # Cognito
+          COGNITO_USER_POOL_ID=${UserPool}
+          COGNITO_CLIENT_ID=${UserPoolClient}
+          NEXT_PUBLIC_COGNITO_USER_POOL_ID=${UserPool}
+          NEXT_PUBLIC_COGNITO_CLIENT_ID=${UserPoolClient}
+
+          # S3
+          S3_BUCKET_NAME=${UploadsBucket}
+
+          # Allowed Email (Beta Mode)
+          ALLOWED_EMAILS=${AllowedEmail}
+
+          # Stripe
+          STRIPE_SECRET_KEY=${StripeSecretKey}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${StripePublishableKey}
+
+          # OpenAI
+          OPENAI_API_KEY=${OpenAIKey}
+
+          # Bedrock
+          BEDROCK_MODEL_ID=anthropic.claude-3-sonnet-20240229-v1:0
+
+          # Admin
+          ADMIN_API_KEY=$(openssl rand -hex 32)
+          ENVEOF
+
+          # Add Cognito Client Secret
+          echo "COGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET" >> .env.local
+
+          # Fix the APP_URL with actual IP
+          PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+          sed -i "s|NEXT_PUBLIC_APP_URL=.*|NEXT_PUBLIC_APP_URL=http://$PUBLIC_IP:3000|" .env.local
+
+          # Install dependencies
+          npm ci
+
+          # Build the application
+          npm run build
+
+          # Start with PM2
+          pm2 start npm --name "invitegenerator" -- start
+          pm2 startup
+          pm2 save
+
+          echo "InviteGenerator setup complete!"
+          echo "Access at: http://$PUBLIC_IP:3000"
+
+# ===========================================
+# OUTPUTS
+# ===========================================
+
+Outputs:
+  EC2PublicIP:
+    Description: Public IP of EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
+    Export:
+      Name: !Sub '${AWS::StackName}-EC2PublicIP'
+
+  AppURL:
+    Description: URL to access the application
+    Value: !Sub 'http://${EC2Instance.PublicIp}:3000'
+    Export:
+      Name: !Sub '${AWS::StackName}-AppURL'
+
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolId'
+
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value: !Ref UserPoolClient
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolClientId'
+
+  S3BucketName:
+    Description: S3 Bucket for uploads
+    Value: !Ref UploadsBucket
+    Export:
+      Name: !Sub '${AWS::StackName}-S3Bucket'
+
+  UsersTableName:
+    Value: !Ref UsersTable
+  InvitationsTableName:
+    Value: !Ref InvitationsTable
+  RSVPsTableName:
+    Value: !Ref RSVPsTable
+  TemplatesTableName:
+    Value: !Ref TemplatesTable
+
+  SSHCommand:
+    Description: SSH command to connect to EC2
+    Value: !Sub 'ssh -i your-key.pem ec2-user@${EC2Instance.PublicIp}'
+
+  SetupLogs:
+    Description: Command to view setup logs
+    Value: !Sub 'ssh -i your-key.pem ec2-user@${EC2Instance.PublicIp} "sudo cat /var/log/user-data.log"'
