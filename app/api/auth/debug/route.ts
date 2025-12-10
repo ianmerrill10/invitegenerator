@@ -23,11 +23,11 @@ export async function GET() {
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID?.substring(0, 4) + "..." || "NOT SET",
   };
 
+  // Note: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are NOT required
+  // when using an IAM Compute role in Amplify - the SDK gets credentials from the role
   const allRequired =
     envCheck.COGNITO_CLIENT_SECRET &&
-    (envCheck.COGNITO_CLIENT_ID || envCheck.NEXT_PUBLIC_COGNITO_CLIENT_ID) &&
-    envCheck.AWS_ACCESS_KEY_ID &&
-    envCheck.AWS_SECRET_ACCESS_KEY;
+    (envCheck.COGNITO_CLIENT_ID || envCheck.NEXT_PUBLIC_COGNITO_CLIENT_ID);
 
   return NextResponse.json({
     status: allRequired ? "OK" : "MISSING ENV VARS",

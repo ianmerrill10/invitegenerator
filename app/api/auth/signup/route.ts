@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         return errorResponse(signUpError.message || "Invalid input");
       }
 
-      return errorResponse("Registration failed. Please try again.");
+      return errorResponse(`Registration failed: ${signUpError.name} - ${signUpError.message}`);
     }
 
     const userSub = signUpResult.UserSub;
