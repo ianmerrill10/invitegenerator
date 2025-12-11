@@ -216,7 +216,8 @@ export default function TemplatesPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Card padding="none" variant="hover" className="overflow-hidden group">
+              <Link href={`/dashboard/create?template=${template.id}`}>
+              <Card padding="none" variant="hover" className="overflow-hidden group cursor-pointer">
                 {/* Preview */}
                 <div
                   className="aspect-[3/4] relative"
@@ -234,9 +235,7 @@ export default function TemplatesPage() {
 
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Link href={`/dashboard/create?template=${template.id}`}>
-                      <Button variant="primary">Use Template</Button>
-                    </Link>
+                    <Button variant="primary">Use Template</Button>
                   </div>
 
                   {/* Preview Content */}
@@ -255,6 +254,7 @@ export default function TemplatesPage() {
                   </p>
                 </div>
               </Card>
+              </Link>
             </motion.div>
           ))}
         </div>
