@@ -135,21 +135,19 @@ export async function POST(request: NextRequest) {
 
     const userSub = signUpResult.UserSub;
 
-    // Auto-confirm user for development (remove in production with email verification)
-    if (process.env.NODE_ENV === "development") {
-      try {
-        const userPoolId = process.env.COGNITO_USER_POOL_ID || process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID;
-        if (userPoolId) {
-          const confirmCommand = new AdminConfirmSignUpCommand({
-            UserPoolId: userPoolId,
-            Username: email,
-          });
-          await cognitoClient.send(confirmCommand);
-        }
-      } catch (confirmError) {
-        console.error("Auto-confirm error:", confirmError);
-        // Continue anyway - user might need to verify email
+    // Auto-confirm user (email verification not configured yet)
+    try {
+      const userPoolId = process.env.COGNITO_USER_POOL_ID || process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID;
+      if (userPoolId) {
+        const confirmCommand = new AdminConfirmSignUpCommand({
+          UserPoolId: userPoolId,
+          Username: email,
+        });
+        await cognitoClient.send(confirmCommand);
       }
+    } catch (confirmError) {
+      console.error("Auto-confirm error:", confirmError);
+      // Continue anyway - user might need to verify email
     }
 
     // Create user record in DynamoDB
@@ -183,10 +181,9 @@ export async function POST(request: NextRequest) {
       // Continue - user was created in Cognito
     }
 
-    // Auto-login after signup (for development)
+    // Auto-login after signup
     let tokens = null;
-    if (process.env.NODE_ENV === "development") {
-      try {
+    try {
         const authParameters: Record<string, string> = {
           USERNAME: email,
           PASSWORD: password,
@@ -201,10 +198,9 @@ export async function POST(request: NextRequest) {
         });
         const authResult = await cognitoClient.send(authCommand);
         tokens = authResult.AuthenticationResult;
-      } catch (authError) {
-        console.error("Auto-login error:", authError);
-        // Continue - user can log in manually
-      }
+    } catch (authError) {
+      console.error("Auto-login error:", authError);
+      // Continue - user can log in manually
     }
 
     // Set cookies if we have tokens
