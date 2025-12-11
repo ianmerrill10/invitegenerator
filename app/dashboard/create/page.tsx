@@ -34,6 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useInvitationStore, useAuthStore } from "@/lib/stores";
 import { EVENT_CATEGORIES, AI_STYLES } from "@/lib/constants";
+import { LocationAutocomplete } from "@/components/ui/location-autocomplete";
 import type { EventType, CreateInvitationFormData } from "@/types";
 
 // Form validation schema
@@ -373,18 +374,21 @@ export default function CreateInvitationPage() {
                     <label htmlFor="locationName" className="label">
                       Venue Name
                     </label>
-                    <Input
-                      id="locationName"
-                      placeholder="e.g., The Grand Ballroom"
-                      leftIcon={<MapPin className="h-5 w-5" />}
+                    <LocationAutocomplete
+                      value={watch("location.name")}
+                      onChange={(location) => {
+                        setValue("location.name", location.name);
+                        setValue("location.address", location.address);
+                        setValue("location.city", location.city || "");
+                      }}
+                      placeholder="Search for a venue or address..."
                       error={errors.location?.name?.message}
-                      {...register("location.name")}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label htmlFor="locationAddress" className="label">
-                      Address (optional)
+                      Address (auto-filled or enter manually)
                     </label>
                     <Input
                       id="locationAddress"
