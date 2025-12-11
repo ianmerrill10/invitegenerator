@@ -165,8 +165,8 @@ export async function POST(request: NextRequest) {
       success: true,
       data: invitation,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create invitation error:", error);
-    return errorResponse("Failed to create invitation", 500);
+    return errorResponse(`Failed to create invitation: ${error.name || 'Unknown'} - ${error.message || 'No details'}`, 500);
   }
 }
