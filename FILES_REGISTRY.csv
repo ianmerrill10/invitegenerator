@@ -1,0 +1,162 @@
+Path,Category,Description,Status,Complete,Audited,LastUpdated,Priority,Notes
+next.config.js,Config,Next.js configuration with security headers CSP image optimization,Complete,Yes,Yes,2025-12-18,Critical,Production-ready with comprehensive security
+tailwind.config.ts,Config,Tailwind CSS configuration with custom design system,Complete,Yes,Yes,2025-12-18,High,Custom brand colors fonts animations
+tsconfig.json,Config,TypeScript configuration,Complete,Yes,Yes,2025-12-18,Critical,Strict mode enabled
+package.json,Config,Project dependencies and scripts,Complete,Yes,Yes,2025-12-18,Critical,All deps verified
+middleware.ts,Config,Edge middleware for auth rate limiting CSRF,Complete,Yes,Yes,2025-12-18,Critical,Security hardened
+.eslintrc.json,Config,ESLint configuration,Complete,Yes,Yes,2025-12-18,Medium,
+jest.config.js,Config,Jest testing configuration,Complete,Yes,Yes,2025-12-18,Medium,
+jest.setup.js,Config,Jest setup file,Complete,Yes,Yes,2025-12-18,Medium,
+app/layout.tsx,App-Root,Root layout with providers SEO analytics,Complete,Yes,Yes,2025-12-18,Critical,Has skip link global providers
+app/page.tsx,App-Root,Landing page,Complete,Yes,Yes,2025-12-18,Critical,Hero features testimonials CTA
+app/error.tsx,App-Root,Global error boundary,Complete,Yes,Yes,2025-12-18,High,
+app/global-error.tsx,App-Root,Root error boundary,Complete,Yes,Yes,2025-12-18,High,
+app/loading.tsx,App-Root,Global loading state,Complete,Yes,Yes,2025-12-18,Medium,
+app/not-found.tsx,App-Root,404 page,Complete,Yes,Yes,2025-12-18,Medium,
+app/robots.ts,App-Root,Robots.txt generation,Complete,Yes,Yes,2025-12-18,Medium,
+app/sitemap.ts,App-Root,Sitemap generation,Complete,Yes,Yes,2025-12-18,Medium,
+app/about/page.tsx,App-Public,About page,Complete,Yes,Yes,2025-12-18,Medium,Company story team
+app/pricing/page.tsx,App-Public,Pricing plans,Complete,Yes,Yes,2025-12-18,High,Free Pro Premium tiers
+app/features/page.tsx,App-Public,Features overview,Complete,Yes,Yes,2025-12-18,Medium,
+app/how-it-works/page.tsx,App-Public,How it works guide,Complete,Yes,Yes,2025-12-18,Medium,
+app/templates/page.tsx,App-Public,Template gallery,Complete,Yes,Yes,2025-12-18,High,Public template browsing
+app/contact/page.tsx,App-Public,Contact form,Complete,Yes,Yes,2025-12-18,Medium,API integration rate limited
+app/faq/page.tsx,App-Public,FAQ page,Complete,Yes,Yes,2025-12-18,Medium,
+app/help/page.tsx,App-Public,Help center,Complete,Yes,Yes,2025-12-18,Medium,
+app/blog/page.tsx,App-Public,Blog listing,InProgress,No,No,2025-12-18,Low,Needs real content
+app/blog/[slug]/page.tsx,App-Public,Blog post detail,InProgress,No,No,2025-12-18,Low,Needs CMS integration
+app/privacy/page.tsx,App-Public,Privacy policy,Complete,Yes,Yes,2025-12-18,High,
+app/terms/page.tsx,App-Public,Terms of service,Complete,Yes,Yes,2025-12-18,High,
+app/auth/layout.tsx,App-Auth,Auth pages layout,Complete,Yes,Yes,2025-12-18,High,
+app/auth/login/page.tsx,App-Auth,Login page,Complete,Yes,Yes,2025-12-18,Critical,Email password Cognito
+app/auth/signup/page.tsx,App-Auth,Signup page,Complete,Yes,Yes,2025-12-18,Critical,Registration flow
+app/auth/error.tsx,App-Auth,Auth error boundary,Complete,Yes,Yes,2025-12-18,High,
+app/auth/loading.tsx,App-Auth,Auth loading state,Complete,Yes,Yes,2025-12-18,Medium,
+app/dashboard/layout.tsx,App-Dashboard,Dashboard layout with sidebar,Complete,Yes,Yes,2025-12-18,Critical,Mobile responsive
+app/dashboard/page.tsx,App-Dashboard,Dashboard home,Complete,Yes,Yes,2025-12-18,Critical,Stats recent invitations
+app/dashboard/analytics/page.tsx,App-Dashboard,Analytics dashboard,InProgress,No,No,2025-12-18,Medium,Basic metrics shown
+app/dashboard/billing/page.tsx,App-Dashboard,Billing and subscription,Complete,Yes,Yes,2025-12-18,High,Stripe integration
+app/dashboard/settings/page.tsx,App-Dashboard,User settings,Complete,Yes,Yes,2025-12-18,High,Profile notifications billing
+app/dashboard/rsvp/page.tsx,App-Dashboard,RSVP tracker overview,Complete,Yes,Yes,2025-12-18,High,All invitation RSVPs
+app/dashboard/templates/page.tsx,App-Dashboard,Template selection,Complete,Yes,Yes,2025-12-18,High,Browse filter templates
+app/dashboard/create/page.tsx,App-Dashboard,Create invitation wizard,Complete,Yes,Yes,2025-12-18,Critical,Step-by-step flow
+app/dashboard/invitations/page.tsx,App-Dashboard,Invitations list,Complete,Yes,Yes,2025-12-18,Critical,Grid list view filters
+app/dashboard/invitations/[id]/page.tsx,App-Dashboard,Invitation details,Complete,Yes,Yes,2025-12-18,High,Overview stats
+app/dashboard/invitations/[id]/edit/page.tsx,App-Dashboard,Invitation editor,Complete,Yes,Yes,2025-12-18,Critical,Drag-drop design tool mobile warning
+app/dashboard/invitations/[id]/rsvp/page.tsx,App-Dashboard,RSVP management,Complete,Yes,Yes,2025-12-18,High,Guest responses
+app/dashboard/invitations/[id]/guests/page.tsx,App-Dashboard,Guest management,Complete,Yes,Yes,2025-12-18,High,Add import guests
+app/dashboard/invitations/[id]/share/page.tsx,App-Dashboard,Share settings,Complete,Yes,Yes,2025-12-18,High,Link sharing QR
+app/i/[shortId]/page.tsx,App-Public,Public invitation view,Complete,Yes,Yes,2025-12-18,Critical,SEO optimized JSON-LD
+app/i/[shortId]/rsvp/page.tsx,App-Public,RSVP submission form,Complete,Yes,Yes,2025-12-18,Critical,Accessible form
+app/admin/layout.tsx,App-Admin,Admin layout,Complete,Yes,Yes,2025-12-18,High,Protected route
+app/admin/page.tsx,App-Admin,Admin dashboard,Complete,Yes,Yes,2025-12-18,High,Overview stats
+app/admin/contacts/page.tsx,App-Admin,CRM contacts page,Complete,Yes,Yes,2025-12-18,High,Contact management
+app/affiliates/page.tsx,App-Affiliate,Affiliate program landing,Complete,Yes,Yes,2025-12-18,Medium,
+app/affiliates/join/page.tsx,App-Affiliate,Affiliate signup,Complete,Yes,Yes,2025-12-18,Medium,
+app/affiliates/dashboard/page.tsx,App-Affiliate,Affiliate dashboard,Complete,Yes,Yes,2025-12-18,Medium,Earnings referrals
+app/affiliates/terms/page.tsx,App-Affiliate,Affiliate terms,Complete,Yes,Yes,2025-12-18,Medium,
+app/site-access/page.tsx,App-Other,Password protection page,Complete,Yes,Yes,2025-12-18,Medium,Dev environment access
+app/api/auth/login/route.ts,API-Auth,Login endpoint,Complete,Yes,Yes,2025-12-18,Critical,Cognito auth rate limited
+app/api/auth/signup/route.ts,API-Auth,Signup endpoint,Complete,Yes,Yes,2025-12-18,Critical,User registration
+app/api/auth/logout/route.ts,API-Auth,Logout endpoint,Complete,Yes,Yes,2025-12-18,High,Cookie clearing
+app/api/auth/csrf/route.ts,API-Auth,CSRF token endpoint,Complete,Yes,Yes,2025-12-18,High,
+app/api/auth/forgot-password/route.ts,API-Auth,Password reset request,Complete,Yes,Yes,2025-12-18,High,
+app/api/auth/reset-password/route.ts,API-Auth,Password reset,Complete,Yes,Yes,2025-12-18,High,
+app/api/invitations/route.ts,API-Invitation,List create invitations,Complete,Yes,Yes,2025-12-18,Critical,
+app/api/invitations/[id]/route.ts,API-Invitation,Get update delete invitation,Complete,Yes,Yes,2025-12-18,Critical,
+app/api/invitations/[id]/publish/route.ts,API-Invitation,Publish invitation,Complete,Yes,Yes,2025-12-18,High,
+app/api/invitations/[id]/duplicate/route.ts,API-Invitation,Duplicate invitation,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/rsvp/[invitationId]/route.ts,API-RSVP,RSVP operations,Complete,Yes,Yes,2025-12-18,Critical,
+app/api/rsvp/[invitationId]/export/route.ts,API-RSVP,Export RSVPs,Complete,Yes,Yes,2025-12-18,Medium,CSV export
+app/api/rsvp/[invitationId]/[rsvpId]/route.ts,API-RSVP,Single RSVP ops,Complete,Yes,Yes,2025-12-18,High,
+app/api/rsvp/all/route.ts,API-RSVP,All user RSVPs,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/public/invitation/[shortId]/route.ts,API-Public,Public invitation data,Complete,Yes,Yes,2025-12-18,Critical,No auth required
+app/api/public/invitation/[shortId]/rsvp-details/route.ts,API-Public,RSVP config,Complete,Yes,Yes,2025-12-18,High,
+app/api/billing/checkout/route.ts,API-Billing,Stripe checkout,Complete,Yes,Yes,2025-12-18,Critical,
+app/api/billing/portal/route.ts,API-Billing,Stripe portal,Complete,Yes,Yes,2025-12-18,High,
+app/api/billing/subscription/route.ts,API-Billing,Subscription status,Complete,Yes,Yes,2025-12-18,High,
+app/api/webhooks/stripe/route.ts,API-Billing,Stripe webhooks,Complete,Yes,Yes,2025-12-18,Critical,Email notifications
+app/api/admin/contacts/route.ts,API-Admin,List create contacts,Complete,Yes,Yes,2025-12-18,High,CRM_DEFAULTS constants
+app/api/admin/contacts/[id]/route.ts,API-Admin,Contact CRUD,Complete,Yes,Yes,2025-12-18,High,
+app/api/admin/contacts/[id]/outreach/route.ts,API-Admin,Outreach logging,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/affiliates/route.ts,API-Affiliate,Affiliate data,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/affiliates/apply/route.ts,API-Affiliate,Application,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/affiliates/track/route.ts,API-Affiliate,Click tracking,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/affiliates/payout/route.ts,API-Affiliate,Payout requests,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/affiliates/leaderboard/route.ts,API-Affiliate,Leaderboard,Complete,Yes,Yes,2025-12-18,Low,
+app/api/ai/generate/route.ts,API-AI,AI content generation,Complete,Yes,Yes,2025-12-18,High,Bedrock integration
+app/api/ai/remove-background/route.ts,API-AI,Background removal,InProgress,No,No,2025-12-18,Medium,Needs testing
+app/api/templates/route.ts,API-Template,Template listing,Complete,Yes,Yes,2025-12-18,High,
+app/api/templates/protected/route.ts,API-Template,Protected templates,Complete,Yes,Yes,2025-12-18,Medium,Premium templates
+app/api/upload/route.ts,API-Other,File upload to S3,Complete,Yes,Yes,2025-12-18,High,
+app/api/user/profile/route.ts,API-User,User profile,Complete,Yes,Yes,2025-12-18,High,
+app/api/user/settings/route.ts,API-User,User settings,Complete,Yes,Yes,2025-12-18,High,
+app/api/notifications/route.ts,API-Other,Notifications,Complete,Yes,Yes,2025-12-18,Medium,Null checks added
+app/api/contact/route.ts,API-Other,Contact form,Complete,Yes,Yes,2025-12-18,Medium,Rate limited
+app/api/og/route.tsx,API-Other,OG image generation,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/health/route.ts,API-Other,Health check,Complete,Yes,Yes,2025-12-18,Medium,
+app/api/site-access/route.ts,API-Other,Password validation,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/button.tsx,Component-UI,Button component,Complete,Yes,Yes,2025-12-18,Critical,Multiple variants loading state
+components/ui/input.tsx,Component-UI,Input component,Complete,Yes,Yes,2025-12-18,High,
+components/ui/textarea.tsx,Component-UI,Textarea component,Complete,Yes,Yes,2025-12-18,High,
+components/ui/select.tsx,Component-UI,Select component,Complete,Yes,Yes,2025-12-18,High,Radix UI based
+components/ui/checkbox.tsx,Component-UI,Checkbox component,Complete,Yes,Yes,2025-12-18,High,
+components/ui/switch.tsx,Component-UI,Switch component,Complete,Yes,Yes,2025-12-18,High,
+components/ui/slider.tsx,Component-UI,Slider component,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/dialog.tsx,Component-UI,Dialog Modal,Complete,Yes,Yes,2025-12-18,High,
+components/ui/popover.tsx,Component-UI,Popover component,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/tooltip.tsx,Component-UI,Tooltip component,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/dropdown-menu.tsx,Component-UI,Dropdown menu,Complete,Yes,Yes,2025-12-18,High,
+components/ui/tabs.tsx,Component-UI,Tabs component,Complete,Yes,Yes,2025-12-18,High,
+components/ui/card.tsx,Component-UI,Card component,Complete,Yes,Yes,2025-12-18,High,Multiple variants
+components/ui/badge.tsx,Component-UI,Badge component,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/avatar.tsx,Component-UI,Avatar component,Complete,Yes,Yes,2025-12-18,Medium,
+components/ui/skeleton.tsx,Component-UI,Skeleton loaders,Complete,Yes,Yes,2025-12-18,High,Table Grid List variants
+components/ui/error-boundary.tsx,Component-UI,Error boundary,Complete,Yes,Yes,2025-12-18,High,
+components/ui/empty-state.tsx,Component-UI,Empty state,Complete,Yes,Yes,2025-12-18,Medium,
+components/editor/canvas-element.tsx,Component-Editor,Canvas element renderer,Complete,Yes,Yes,2025-12-18,Critical,Drag resize rotate
+components/editor/editor-toolbar.tsx,Component-Editor,Editor top toolbar,Complete,Yes,Yes,2025-12-18,High,
+components/editor/element-library.tsx,Component-Editor,Element library panel,Complete,Yes,Yes,2025-12-18,High,Text shapes images
+components/editor/layers-panel.tsx,Component-Editor,Layers management,Complete,Yes,Yes,2025-12-18,High,
+components/editor/properties-panel.tsx,Component-Editor,Element properties,Complete,Yes,Yes,2025-12-18,High,
+components/editor/color-picker.tsx,Component-Editor,Color picker,Complete,Yes,Yes,2025-12-18,Medium,
+components/editor/font-picker.tsx,Component-Editor,Font selector,Complete,Yes,Yes,2025-12-18,Medium,
+components/editor/background-removal.tsx,Component-Editor,BG removal tool,InProgress,No,No,2025-12-18,Low,API integration needed
+components/landing/header.tsx,Component-Landing,Site header,Complete,Yes,Yes,2025-12-18,Critical,Mobile menu responsive
+components/landing/footer.tsx,Component-Landing,Site footer,Complete,Yes,Yes,2025-12-18,High,
+components/templates/template-gallery.tsx,Component-Template,Template browser,Complete,Yes,Yes,2025-12-18,High,Responsive grid
+components/templates/template-card.tsx,Component-Template,Template card,Complete,Yes,Yes,2025-12-18,High,
+components/templates/template-preview.tsx,Component-Template,Template preview,Complete,Yes,Yes,2025-12-18,Medium,
+components/public/rsvp-form.tsx,Component-Public,RSVP submission form,Complete,Yes,Yes,2025-12-18,Critical,Accessible validated
+components/public/invitation-page.tsx,Component-Public,Invitation display,Complete,Yes,Yes,2025-12-18,High,
+components/public/event-details.tsx,Component-Public,Event info display,Complete,Yes,Yes,2025-12-18,Medium,
+lib/utils.ts,Library,Utility functions,Complete,Yes,Yes,2025-12-18,Critical,cn dates formatting
+lib/constants.ts,Library,App constants,Complete,Yes,Yes,2025-12-18,Critical,Config CRM defaults
+lib/auth-server.ts,Library,Server auth utils,Complete,Yes,Yes,2025-12-18,Critical,JWT validation
+lib/api-utils.ts,Library,API helpers,Complete,Yes,Yes,2025-12-18,High,Response formatting
+lib/api-validation.ts,Library,API validation,Complete,Yes,Yes,2025-12-18,High,Zod schemas
+lib/rate-limit.ts,Library,Rate limiting,Complete,Yes,Yes,2025-12-18,Critical,In-memory limiter
+lib/security.ts,Library,Security utils,Complete,Yes,Yes,2025-12-18,Critical,Sanitization
+lib/csrf.ts,Library,CSRF utils,Complete,Yes,Yes,2025-12-18,High,Token generation
+lib/audit-log.ts,Library,Audit logging,Complete,Yes,Yes,2025-12-18,High,Auth attempts rate limits
+lib/errors.ts,Library,Error classes,Complete,Yes,Yes,2025-12-18,High,Custom errors
+lib/email.ts,Library,Email service,Complete,Yes,Yes,2025-12-18,High,SES integration
+lib/data/templates.ts,Library,Template data,Complete,Yes,Yes,2025-12-18,High,100+ templates
+lib/stores/auth-store.ts,Store,Auth state,Complete,Yes,Yes,2025-12-18,Critical,Zustand store
+lib/stores/editor-store.ts,Store,Editor state,Complete,Yes,Yes,2025-12-18,Critical,Design state
+lib/stores/invitation-store.ts,Store,Invitation state,Complete,Yes,Yes,2025-12-18,Critical,CRUD operations
+lib/services/affiliate-service.ts,Service,Affiliate operations,Complete,Yes,Yes,2025-12-18,Medium,
+lib/services/contacts-service.ts,Service,CRM operations,Complete,Yes,Yes,2025-12-18,Medium,
+lib/services/notification-service.ts,Service,Notifications,Complete,Yes,Yes,2025-12-18,Medium,
+services/stripe.ts,Service,Stripe client,Complete,Yes,Yes,2025-12-18,Critical,
+services/aws/dynamodb.ts,Service,DynamoDB client,Complete,Yes,Yes,2025-12-18,Critical,
+services/aws/s3.ts,Service,S3 client,Complete,Yes,Yes,2025-12-18,High,
+services/aws/ses.ts,Service,SES client,Complete,Yes,Yes,2025-12-18,High,
+services/aws/cognito.ts,Service,Cognito client,Complete,Yes,Yes,2025-12-18,Critical,
+services/aws/bedrock.ts,Service,Bedrock AI client,Complete,Yes,Yes,2025-12-18,High,
+hooks/use-debounce.ts,Hook,Debounce hook,Complete,Yes,Yes,2025-12-18,Medium,
+hooks/use-local-storage.ts,Hook,Local storage hook,Complete,Yes,Yes,2025-12-18,Medium,
+hooks/use-media-query.ts,Hook,Media query hook,Complete,Yes,Yes,2025-12-18,Medium,
+hooks/use-editor-shortcuts.tsx,Hook,Editor shortcuts,Complete,Yes,Yes,2025-12-18,High,
+types/index.ts,Types,TypeScript types,Complete,Yes,Yes,2025-12-18,Critical,All interfaces
+styles/globals.css,Styles,Global styles,Complete,Yes,Yes,2025-12-18,High,Tailwind + custom

@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        - NEXT_PUBLIC_COGNITO_USER_POOL_ID=${NEXT_PUBLIC_COGNITO_USER_POOL_ID}
+        - NEXT_PUBLIC_COGNITO_CLIENT_ID=${NEXT_PUBLIC_COGNITO_CLIENT_ID}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DYNAMODB_USERS_TABLE=${DYNAMODB_USERS_TABLE:-invitegenerator-users}
+      - DYNAMODB_INVITATIONS_TABLE=${DYNAMODB_INVITATIONS_TABLE:-invitegenerator-invitations}
+      - DYNAMODB_RSVP_TABLE=${DYNAMODB_RSVP_TABLE:-invitegenerator-rsvp}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-invitegenerator-assets}
+      - SES_FROM_EMAIL=${SES_FROM_EMAIL:-noreply@invitegenerator.com}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add Redis for session storage/caching
+  # redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+
+# volumes:
+#   redis_data:
+
+networks:
+  default:
+    name: invitegenerator-network

@@ -1,0 +1,86 @@
+Test ID,Category,Test Name,Status,Result,Details,Fixed On The Fly,Fix Description,Last Run Date
+1.1,Build & Compile,TypeScript Type Check,PASS,0 errors,"All .ts/.tsx files compile. 1 error found and fixed (forgot-password label prop).",YES,"Replaced invalid `label` prop on Input with separate <label> element in forgot-password page.",2026-02-11
+1.2,Build & Compile,ESLint,PASS (with warnings),0 errors 15 warnings,"1 error fixed (let→const in bulk route). 15 warnings: 11 img elements should use next/image; 3 missing alt text; 1 anonymous default export.",YES,"Changed `let expressionAttributeValues` to `const` in app/api/invitations/bulk/route.ts.",2026-02-11
+1.3,Build & Compile,Production Build,PASS,Exit code 0,"All pages built successfully. Static + dynamic pages generated. Shared JS: 87.6kB.",NO,,2026-02-11
+1.4,Build & Compile,Bundle Size,PASS,Under threshold,"Shared first-load JS: 87.6kB (under 100kB). Largest page: ~185kB (dashboard/templates).",NO,,2026-02-11
+2.1,Unit Tests,All 11 Suites,PASS,216/216 tests pass,"button.test.tsx; empty-states.test.tsx; utils.test.ts; rate-limit.test.ts; errors.test.ts; security.test.ts; performance.test.ts; prodigi-service.test.ts; affiliate-service.test.ts; export-import.test.ts; invitations-api.test.ts",NO,,2026-02-11
+3.1,HTTP Routes,/ (homepage),PASS,200,,NO,,2026-02-11
+3.2,HTTP Routes,/about,PASS,200,,NO,,2026-02-11
+3.3,HTTP Routes,/affiliates,PASS,200,,NO,,2026-02-11
+3.4,HTTP Routes,/affiliates/join,PASS,200,,NO,,2026-02-11
+3.5,HTTP Routes,/affiliates/terms,PASS,200,,NO,,2026-02-11
+3.6,HTTP Routes,/affiliates/dashboard,PASS,200,,NO,,2026-02-11
+3.7,HTTP Routes,/blog,PASS,200,,NO,,2026-02-11
+3.8,HTTP Routes,/contact,PASS,200,,NO,,2026-02-11
+3.9,HTTP Routes,/faq,PASS,200,,NO,,2026-02-11
+3.10,HTTP Routes,/features,PASS,200,,NO,,2026-02-11
+3.11,HTTP Routes,/help,PASS,200,,NO,,2026-02-11
+3.12,HTTP Routes,/how-it-works,PASS,200,,NO,,2026-02-11
+3.13,HTTP Routes,/packages,PASS,200,,NO,,2026-02-11
+3.14,HTTP Routes,/pricing,PASS,200,,NO,,2026-02-11
+3.15,HTTP Routes,/privacy,PASS,200,,NO,,2026-02-11
+3.16,HTTP Routes,/templates,PASS,200,,NO,,2026-02-11
+3.17,HTTP Routes,/terms,PASS,200,,NO,,2026-02-11
+3.18,HTTP Routes,/auth/login,PASS,200,,NO,,2026-02-11
+3.19,HTTP Routes,/auth/signup,PASS,200,,NO,,2026-02-11
+3.20,HTTP Routes,/auth/forgot-password,PASS,200,,NO,,2026-02-11
+3.21,HTTP Routes,/dashboard,PASS,200,,NO,,2026-02-11
+3.22,HTTP Routes,/dashboard/analytics,PASS,200,,NO,,2026-02-11
+3.23,HTTP Routes,/dashboard/billing,PASS,200,,NO,,2026-02-11
+3.24,HTTP Routes,/dashboard/create,PASS,200,,NO,,2026-02-11
+3.25,HTTP Routes,/dashboard/invitations,PASS,200,,NO,,2026-02-11
+3.26,HTTP Routes,/dashboard/rsvp,PASS,200,,NO,,2026-02-11
+3.27,HTTP Routes,/dashboard/settings,PASS,200,,NO,,2026-02-11
+3.28,HTTP Routes,/dashboard/templates,PASS,200,,NO,,2026-02-11
+3.29,HTTP Routes,/admin,PASS,200,,NO,,2026-02-11
+3.30,HTTP Routes,/admin/contacts,PASS,200,,NO,,2026-02-11
+3.31,HTTP Routes,/site-access,PASS,200,,NO,,2026-02-11
+3.32,HTTP Routes,/registry/create,PASS,200,,NO,,2026-02-11
+4.1,API Endpoints,GET /api/health,PASS,200,,NO,,2026-02-11
+5.1,Security,Hardcoded Secrets Scan,PASS,0 found,"No API keys or passwords in source code. All use process.env.",NO,,2026-02-11
+5.2,Security,npm Dependency Audit,WARN,34 vulnerabilities,"2 moderate + 32 high. Primary: Next.js 14.2.x known issues + qs library. Fix requires major Next.js upgrade (breaking change).",NO,"Upgrade to Next.js 16.x needed but is breaking change. Deferred.",2026-02-11
+5.3,Security,CSRF Protection,PASS,Implemented,"CSRF tokens validated on state-changing requests. Webhooks properly exempted.",NO,,2026-02-11
+5.4,Security,XSS (dangerouslySetInnerHTML),PASS,2 instances - both safe,"Blog content is hardcoded (not user input). JSON-LD uses JSON.stringify (auto-escapes).",NO,,2026-02-11
+5.5,Security,NoSQL Injection,PASS,No vectors found,"All DynamoDB queries use parameterized ExpressionAttributeValues.",NO,,2026-02-11
+5.6,Security,Rate Limiting,PASS,20+ endpoints protected,"Auth: 10/min. RSVP: 10/5min. Upload: 30/min. AI: 20/min. Contact: 5/hour.",NO,,2026-02-11
+5.7,Security,Error Exposure,PASS,Production sanitized,"Generic error messages in production. Detailed only in development.",NO,,2026-02-11
+5.8,Security,Cookie Security,PASS,Properly configured,"httpOnly: true. secure: true (prod). sameSite: strict.",NO,,2026-02-11
+5.9,Security,Security Headers,PASS,All present,"CSP with nonce. HSTS. X-Frame-Options: SAMEORIGIN. X-Content-Type-Options: nosniff.",NO,,2026-02-11
+5.10,Security,Input Validation,PASS,Comprehensive,"All API inputs validated. Signup: name 2+chars email format password strength. RSVP: name 2-100 email format enum values.",NO,,2026-02-11
+6.1,SEO & A11y,Meta Tags,PASS,Complete,"Title template. Description. Keywords (11). OG tags with image dimensions. Twitter card.",NO,,2026-02-11
+6.2,SEO & A11y,Robots.txt,PASS,Properly configured,"Blocks /api /dashboard /admin. Blocks AI bots (GPTBot ChatGPT CCBot). Includes sitemap.",NO,,2026-02-11
+6.3,SEO & A11y,Sitemap.xml,PASS,40+ pages,"Static + template categories + content pages. Proper priority and changeFrequency.",NO,,2026-02-11
+6.4,SEO & A11y,Favicon,FAIL,Missing file,"favicon.ico referenced in layout.tsx but not found in /public. Only icon.svg exists.",NO,"Needs creation: generate favicon.ico from brand colors.",2026-02-11
+6.5,SEO & A11y,OG Image,FAIL,Missing file,"og-image.png referenced in meta tags but not found in /public.",NO,"Needs creation: 1200x630 branded image for social sharing.",2026-02-11
+6.6,SEO & A11y,Apple Touch Icon,FAIL,Missing file,"apple-touch-icon.png referenced but not found in /public.",NO,"Needs creation: 180x180 icon for iOS.",2026-02-11
+6.7,SEO & A11y,PWA Icons,FAIL,8 files missing,"manifest.json references icon-72 through icon-512. None exist in /public/icons/.",NO,"Needs creation: 8 icon sizes for PWA.",2026-02-11
+6.8,SEO & A11y,Alt Text,WARN,3 missing alt props,"editor-toolbar.tsx:346. edit page:412. empty-states.tsx:170. (ESLint warnings)",NO,"Non-critical: editor components not public-facing.",2026-02-11
+6.9,SEO & A11y,ARIA Labels,WARN,1 icon button missing,"how-it-works page play button (line 168) has no aria-label.",NO,"Low priority: needs aria-label='Watch demo video'.",2026-02-11
+6.10,SEO & A11y,Skip Link,PASS,Implemented,"Skip-to-content link in layout.tsx. Hidden by default visible on focus.",NO,,2026-02-11
+6.11,SEO & A11y,Heading Hierarchy,PASS,Mostly correct,"Minor skip in admin contacts page (h1→h3). All public pages correct.",NO,,2026-02-11
+6.12,SEO & A11y,Form Labels,PASS,All labeled,"Contact form FAQ search dashboard forms - all inputs have htmlFor/id pairs.",NO,,2026-02-11
+6.13,SEO & A11y,Focus Indicators,WARN,5 slider thumbs missing,"text-effects-panel.tsx has focus:outline-none without focus-visible:ring replacement on 5 slider thumbs.",NO,"Editor-only component. Low priority.",2026-02-11
+6.14,SEO & A11y,Color Contrast,WARN,Some low contrast,"text-surface-300 on light background (~3:1). text-surface-400 passes AA but fails AAA.",NO,"Decorative/placeholder text. Functional text passes AA.",2026-02-11
+6.15,SEO & A11y,Manifest.json,PASS,Theme color correct,"manifest.json theme_color is #EC4899 (brand pink). Matches brand.",YES,"Verified — was already correct.",2026-02-11
+7.1,Code Quality,Duplicate Files,WARN,3 duplicates found,"email-templates.ts vs email-templates/index.ts. audit-log.ts vs audit-logger.ts. notification-service.ts vs services/notification-service.ts.",NO,"Consolidation needed. Not blocking.",2026-02-11
+7.2,Code Quality,Unused Exports,PASS,Mostly clean,"Some lib files have exports only used internally. No significant dead exports.",NO,,2026-02-11
+7.3,Code Quality,Unused Dependencies,WARN,2-3 potentially unused,"react-color (1 import). react-dnd (1 import). Low usage but may be needed.",NO,"Verify before removing.",2026-02-11
+7.4,Code Quality,TODO/FIXME Comments,PASS,0 found,"No unresolved TODOs in source code.",NO,,2026-02-11
+7.5,Code Quality,Commented-Out Code,PASS,0 blocks found,"No large commented-out code blocks.",NO,,2026-02-11
+7.6,Code Quality,Console.log Count,PASS,97 statements,"Audited all 97 console.log/info. Removed 3 debug logs (packages + registry). Remaining 94 are legitimate operational logging.",YES,"Removed console.info from packages/[slug]/page.tsx and registry/[customUrl]/page.tsx.",2026-02-11
+7.7,Code Quality,TypeScript any,PASS,Minimal usage,"Only in error handling type assertions. No lazy `any` usage.",NO,,2026-02-11
+8.1,Navigation,Header Links,PASS,5/5 valid,"Templates Pricing Features How-It-Works + auth buttons all resolve.",NO,,2026-02-11
+8.2,Navigation,Footer Links,PASS,15/15 valid,"All product resource company legal links verified. Fixed in prior audit.",NO,,2026-02-11
+8.3,Navigation,Sidebar Links,PASS,6/6 valid,"Dashboard Invitations Create Templates RSVP Settings all resolve.",NO,,2026-02-11
+8.4,Navigation,CTA Buttons,PASS,All valid,"Hero CTAs pricing CTAs feature CTAs all navigate correctly.",NO,,2026-02-11
+10.1,E2E (Playwright),Homepage hero + CTAs,PASS,23/23,"All 23 Playwright E2E tests pass across 5 suites (homepage login signup create-invitation public-pages).",NO,,2026-02-12
+10.2,E2E (Playwright),Login form rendering,PASS,5/5,"Login page renders form fields submit button social login and navigation links.",NO,,2026-02-12
+10.3,E2E (Playwright),Signup form rendering,PASS,5/5,"Signup page renders all fields password validation and terms links.",NO,,2026-02-12
+10.4,E2E (Playwright),Create invitation flow,PASS,4/4,"Dashboard auth redirect + templates page + category filtering.",NO,,2026-02-12
+10.5,E2E (Playwright),Public pages + SEO,PASS,5/5,"All 11 marketing pages return 200. Meta tags favicon security headers and Stripe webhook endpoint verified.",NO,,2026-02-12
+11.1,Lighthouse,Homepage Performance,BASELINE,45/100,"FCP: 2.0s LCP: 36.4s TBT: 2340ms CLS: 0 (dev server - production will be significantly better).",NO,,2026-02-12
+11.2,Lighthouse,Homepage Accessibility,BASELINE,94/100,"Minor contrast ratio issues. Heading order not sequential.",NO,,2026-02-12
+11.3,Lighthouse,Homepage Best Practices,BASELINE,92/100,"Console errors logged. Missing source maps.",NO,,2026-02-12
+11.4,Lighthouse,Homepage SEO,BASELINE,91/100,"robots.txt validation issue (now fixed — orphaned Allow directives restructured).",YES,"Restructured robots.txt to put all directives inside User-agent block.",2026-02-12
+11.5,Lighthouse,Login Performance,BASELINE,45/100,"FCP: 1.7s LCP: 43.2s TBT: 2500ms CLS: 0 (dev server).",NO,,2026-02-12
+11.6,Lighthouse,Login Accessibility,BASELINE,94/100,"Same patterns as homepage.",NO,,2026-02-12

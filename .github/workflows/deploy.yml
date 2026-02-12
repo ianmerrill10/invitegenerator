@@ -1,0 +1,81 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run tests
+        run: npm test -- --passWithNoTests
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_COGNITO_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_COGNITO_USER_POOL_ID }}
+          NEXT_PUBLIC_COGNITO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_COGNITO_CLIENT_ID }}
+
+      # Deploy to Vercel (if using Vercel)
+      - name: Deploy to Vercel
+        if: ${{ vars.DEPLOY_TARGET == 'vercel' }}
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      # Deploy to AWS (if using AWS)
+      - name: Configure AWS credentials
+        if: ${{ vars.DEPLOY_TARGET == 'aws' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Deploy to AWS S3 + CloudFront
+        if: ${{ vars.DEPLOY_TARGET == 'aws' }}
+        run: |
+          # Export static files
+          npm run build
+          # Sync to S3
+          aws s3 sync .next/static s3://${{ vars.S3_BUCKET }}/_next/static --delete
+          aws s3 sync public s3://${{ vars.S3_BUCKET }} --delete
+          # Invalidate CloudFront cache
+          aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+      # Deploy via Docker (if using Docker)
+      - name: Build and push Docker image
+        if: ${{ vars.DEPLOY_TARGET == 'docker' }}
+        run: |
+          docker build -t invitegenerator:${{ github.sha }} .
+          docker tag invitegenerator:${{ github.sha }} ${{ vars.DOCKER_REGISTRY }}/invitegenerator:latest
+          docker push ${{ vars.DOCKER_REGISTRY }}/invitegenerator:latest
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Deployment completed successfully!"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: echo "Deployment failed!"
